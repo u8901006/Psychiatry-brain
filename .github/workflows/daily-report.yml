@@ -2,7 +2,7 @@ name: Psychiatry Daily Report
 
 on:
   schedule:
-    - cron: "0 22 * * *" # UTC 22:00 =?啣??? 06:00
+    - cron: "0 22 * * *" # UTC 22:00 =台北時間 06:00
   workflow_dispatch:
     inputs:
       date:
@@ -92,11 +92,11 @@ jobs:
               date = name.replace('psychiatry-','').replace('.html','')
               try:
                   d = datetime.strptime(date, '%Y-%m-%d')
-                  date_display = d.strftime('%Y撟?-m??-d??)
+                  date_display = d.strftime('%Y年%-m月%-d日')
               except:
                   date_display = date
-              weekday = ['銝','鈭?,'銝?,'??,'鈭?,'??,'??][datetime.strptime(date, '%Y-%m-%d').weekday()] if len(date)==10 else ''
-              links += f'<li><a href=\"{name}\">?? {date_display}嚗惋weekday}嚗?/a></li>\n'
+              weekday = ['一','二','三','四','五','六','日'][datetime.strptime(date, '%Y-%m-%d').weekday()] if len(date)==10 else ''
+              links += f'<li><a href=\"{name}\">📅 {date_display}（週{weekday}）</a></li>\n'
 
           total = len(html_files)
           index = f'''<!DOCTYPE html>
@@ -104,7 +104,7 @@ jobs:
           <head>
           <meta charset=\"UTF-8\"/>
           <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"/>
-          <title>Psychiatry Brain 繚 蝎曄??怠飛??亙</title>
+          <title>Psychiatry Brain · 精神醫學文獻日報</title>
           <style>
             *, *::before, *::after {{ box-sizing: border-box; margin: 0; padding: 0; }}
             body {{ background: #000; color: #E3F2FD; font-family: -apple-system, \"PingFang TC\", \"Helvetica Neue\", Arial, sans-serif; min-height: 100vh; }}
@@ -125,13 +125,13 @@ jobs:
           </head>
           <body>
           <div class=\"container\">
-            <div class=\"logo\">??</div>
+            <div class=\"logo\">🧠</div>
             <h1>Psychiatry Brain</h1>
-            <p class=\"subtitle\">蝎曄??怠飛??亙 繚 瘥?芸??湔</p>
-            <p class=\"count\">??{total} ???/p>
+            <p class=\"subtitle\">精神醫學文獻日報 · 每日自動更新</p>
+            <p class=\"count\">共 {total} 期日報</p>
             <ul>{links}</ul>
             <footer>
-              <p>Powered by PubMed + Gemma AI 繚 <a href=\"https://github.com/u8901006/Psychiatry-brain\">GitHub</a></p>
+              <p>Powered by PubMed + Gemma AI · <a href=\"https://github.com/u8901006/Psychiatry-brain\">GitHub</a></p>
             </footer>
           </div>
           </body>
@@ -147,12 +147,12 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add docs/
           git diff --cached --quiet && echo "No changes to commit" && exit 0
-          git commit -m "?? psychiatry daily report: ${{ steps.date.outputs.target }}"
+          git commit -m "📄 psychiatry daily report: ${{ steps.date.outputs.target }}"
           git push
 
       - name: Summary
         run: |
-          echo "### ?? Psychiatry Daily Report" >> $GITHUB_STEP_SUMMARY
+          echo "### 📄 Psychiatry Daily Report" >> $GITHUB_STEP_SUMMARY
           echo "**Date:** ${{ steps.date.outputs.target }}" >> $GITHUB_STEP_SUMMARY
           echo "**Papers analyzed:** ${{ steps.papers.outputs.count }}" >> $GITHUB_STEP_SUMMARY
           echo "**Report:** [psychiatry-${{ steps.date.outputs.target }}.html](https://u8901006.github.io/Psychiatry-brain/psychiatry-${{ steps.date.outputs.target }}.html)" >> $GITHUB_STEP_SUMMARY
