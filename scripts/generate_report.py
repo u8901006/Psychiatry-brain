@@ -1,31 +1,35 @@
 #!/usr/bin/env python3
 """
-Generate psychiatry daily report HTML using Gemma API.
-Reads papers JSON, analyzes with Google GenAI (Gemma), generates styled HTML.
+Generate psychiatry daily report HTML using Google GenAI (Gemma).
+Reads papers JSON, analyzes with AI, generates styled HTML.
 """
 
 import json
 import sys
 import os
+import time
 import argparse
 from datetime import datetime, timezone, timedelta
 
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 
 MODEL_NAME = "gemma-3-27b-it"
+FALLBACK_MODEL = "gemini-2.0-flash"
 
-SYSTEM_PROMPT = """你是精神醫學領域的資深研究員與科學傳播者。你的任務是：
-1. 從提供的醫學文獻中，篩選出最具臨床意義與研究價值的論文
-2. 對每篇論文進行繁體中文摘要、分類、PICO 分析
-3. 評估其臨床實用性（高/中/低）
-4. 生成適合醫療專業人員閱讀的日報
-
-輸出格式要求：
-- 語言：繁體中文（台灣用語）
-- 專業但易懂
-- 每篇論文需包含：中文標題、一句話總結、PICO分析、臨床實用性、分類標籤
-- 最後提供今日精選 TOP 3（最重要/最影響臨床實踐的論文）
-"""
+SYSTEM_PROMPT = (
+    "你是精神醫學領域的資深研究員與科學傳播者。你的任務是：\n"
+    "1. 從提供的醫學文獻中，篩選出最具臨床意義與研究價值的論文\n"
+    "2. 對每篇論文進行繁體中文摘要、分類、PICO 分析\n"
+    "3. 評估其臨床實用性（高/中/低）\n"
+    "4. 生成適合醫療專業人員閱讀的日報\n\n"
+    "輸出格式要求：\n"
+    "- 語言：繁體中文（台灣用語）\n"
+    "- 專業但易懂\n"
+    "- 每篇論文需包含：中文標題、一句話總結、PICO分析、臨床實用性、分類標籤\n"
+    "- 最後提供今日精選 TOP 3（最重要/最影響臨床實踐的論文）\n"
+    "回傳格式必須是純 JSON，不要用 markdown code block 包裹。"
+)
 
 
 def load_papers(input_path: str) -> dict:
@@ -38,28 +42,18 @@ def load_papers(input_path: str) -> dict:
 
 
 def analyze_papers(api_key: str, papers_data: dict) -> dict:
-    genai.configure(api_key=api_key)
-    model = genai.GenerativeModel(
-        model_name=MODEL_NAME,
-        system_instruction=SYSTEM_PROMPT,
-        generation_config=genai.GenerationConfig(
-            temperature=0.3,
-            top_p=0.9,
-            max_output_tokens=8192,
-            response_mime_type="application/json",
-        ),
-    )
+    client = genai.Client(api_key=api_key)
 
     papers_text = json.dumps(
         papers_data.get("papers", []), ensure_ascii=False, indent=2
     )
-    date_str = papers_data.get(
-        "date", datetime.now(timezone(timedelta(hours=8))).strftime("%Y-%m-%d")
-    )
+    tz_taipei = timezone(timedelta(hours=8))
+    date_str = papers_data.get("date", datetime.now(tz_taipei).strftime("%Y-%m-%d"))
+    paper_count = papers_data.get("count", 0)
 
-    prompt = f"""以下是 {date_str} 從 PubMed 抓取的最新精神醫學文獻（共 {papers_data.get("count", 0)} 篇）。
+    prompt = f"""以下是 {date_str} 從 PubMed 抓取的最新精神醫學文獻（共 {paper_count} 篇）。
 
-請進行以下分析，並以 JSON 格式回傳：
+請進行以下分析，並以 JSON 格式回傳（不要用 markdown code block）：
 
 {{
   "date": "{date_str}",
@@ -96,7 +90,7 @@ def analyze_papers(api_key: str, papers_data: dict) -> dict:
       "emoji": "emoji"
     }}
   ],
-  "keywords": ["關鍵字1", "關鍵字2", "關鍵字3"],
+  "keywords": ["關鍵字1", "關鍵字2"],
   "topic_distribution": {{
     "憂鬱症": 3,
     "精神分裂症": 2
@@ -108,38 +102,72 @@ def analyze_papers(api_key: str, papers_data: dict) -> dict:
 
 請篩選出最重要的 TOP 5-8 篇論文放入 top_picks（按重要性排序），其餘放入 all_papers。
 每篇 paper 的 tags 請從以下選擇：憂鬱症、精神分裂症、雙相情緒障礙、焦慮症、PTSD、強迫症、成癮、心理治療、自殺防治、兒少精神醫學、自閉症、ADHD、精神藥理學、神經科學、疼痛管理、解離症、睡眠醫學、老年精神醫學、社區精神醫學、跨文化精神醫學。
-"""
+記住：回傳純 JSON，不要用 ```json``` 包裹。"""
 
-    print(f"[INFO] Sending to {MODEL_NAME} for analysis...", file=sys.stderr)
-    try:
-        response = model.generate_content(prompt)
-        text = response.text
-        result = json.loads(text)
-        print(
-            f"[INFO] Analysis complete: {len(result.get('top_picks', []))} top picks, {len(result.get('all_papers', []))} total",
-            file=sys.stderr,
-        )
-        return result
-    except json.JSONDecodeError as e:
-        print(f"[ERROR] Failed to parse Gemma response as JSON: {e}", file=sys.stderr)
-        print(f"[DEBUG] Raw response: {text[:500]}", file=sys.stderr)
-        return None
-    except Exception as e:
-        print(f"[ERROR] Gemma API call failed: {e}", file=sys.stderr)
-        return None
+    models_to_try = [MODEL_NAME, FALLBACK_MODEL]
+
+    for model_name in models_to_try:
+        for attempt in range(3):
+            try:
+                print(
+                    f"[INFO] Trying {model_name} (attempt {attempt + 1})...",
+                    file=sys.stderr,
+                )
+                response = client.models.generate_content(
+                    model=model_name,
+                    contents=prompt,
+                    config=types.GenerateContentConfig(
+                        system_instruction=SYSTEM_PROMPT,
+                        temperature=0.3,
+                        top_p=0.9,
+                        max_output_tokens=8192,
+                    ),
+                )
+                text = response.text.strip()
+                if text.startswith("```"):
+                    text = text.split("\n", 1)[1] if "\n" in text else text[3:]
+                    text = text.rstrip("`").strip()
+
+                result = json.loads(text)
+                print(
+                    f"[INFO] Analysis complete: {len(result.get('top_picks', []))} top picks, {len(result.get('all_papers', []))} total",
+                    file=sys.stderr,
+                )
+                return result
+
+            except json.JSONDecodeError as e:
+                print(
+                    f"[WARN] JSON parse failed on attempt {attempt + 1}: {e}",
+                    file=sys.stderr,
+                )
+                if attempt < 2:
+                    time.sleep(5)
+                continue
+            except Exception as e:
+                err_str = str(e)
+                if "429" in err_str or "quota" in err_str.lower():
+                    wait = 30 * (attempt + 1)
+                    print(f"[WARN] Rate limited, waiting {wait}s...", file=sys.stderr)
+                    time.sleep(wait)
+                    continue
+                print(f"[ERROR] {model_name} failed: {e}", file=sys.stderr)
+                break
+
+    print("[ERROR] All models and attempts failed", file=sys.stderr)
+    return None
 
 
 def generate_html(analysis: dict) -> str:
     date_str = analysis.get(
         "date", datetime.now(timezone(timedelta(hours=8))).strftime("%Y-%m-%d")
     )
-    date_display = (
-        datetime.strptime(date_str, "%Y-%m-%d").strftime("%Y年%-m月%-d日")
-        if "-" in date_str
-        else date_str
-    )
+    date_parts = date_str.split("-")
+    if len(date_parts) == 3:
+        date_display = f"{date_parts[0]}年{int(date_parts[1])}月{int(date_parts[2])}日"
+    else:
+        date_display = date_str
 
-    summary = analysis.get("market_summary", "今日暫無文獻更新。")
+    summary = analysis.get("market_summary", "")
     top_picks = analysis.get("top_picks", [])
     all_papers = analysis.get("all_papers", [])
     keywords = analysis.get("keywords", [])
@@ -152,9 +180,11 @@ def generate_html(analysis: dict) -> str:
         )
         utility_class = (
             "utility-high"
-            if pick.get("clinical_utility") == "高"
+            if pick.get("clinical_utility") == "\u9ad8"
             else (
-                "utility-mid" if pick.get("clinical_utility") == "中" else "utility-low"
+                "utility-mid"
+                if pick.get("clinical_utility") == "\u4e2d"
+                else "utility-low"
             )
         )
         pico = pick.get("pico", {})
@@ -172,16 +202,16 @@ def generate_html(analysis: dict) -> str:
         <div class="news-card featured">
           <div class="card-header">
             <span class="rank-badge">#{pick.get("rank", "")}</span>
-            <span class="emoji-icon">{pick.get("emoji", "📄")}</span>
-            <span class="{utility_class}">{pick.get("clinical_utility", "中")}實用性</span>
+            <span class="emoji-icon">{pick.get("emoji", "\U0001f4c4")}</span>
+            <span class="{utility_class}">{pick.get("clinical_utility", "\u4e2d")}\u5b9e\u7528\u6027</span>
           </div>
           <h3>{pick.get("title_zh", pick.get("title_en", ""))}</h3>
-          <p class="journal-source">{pick.get("journal", "")} · {pick.get("title_en", "")}</p>
+          <p class="journal-source">{pick.get("journal", "")} &middot; {pick.get("title_en", "")}</p>
           <p>{pick.get("summary", "")}</p>
           {pico_html}
           <div class="card-footer">
             {tags_html}
-            <a href="{pick.get("url", "#")}" target="_blank">閱讀原文 →</a>
+            <a href="{pick.get("url", "#")}" target="_blank">\u95b1\u8b80\u539f\u6587 \u2192</a>
           </div>
         </div>"""
 
@@ -192,25 +222,25 @@ def generate_html(analysis: dict) -> str:
         )
         utility_class = (
             "utility-high"
-            if paper.get("clinical_utility") == "高"
+            if paper.get("clinical_utility") == "\u9ad8"
             else (
                 "utility-mid"
-                if paper.get("clinical_utility") == "中"
+                if paper.get("clinical_utility") == "\u4e2d"
                 else "utility-low"
             )
         )
         all_papers_html += f"""
         <div class="news-card">
           <div class="card-header-row">
-            <span class="emoji-sm">{paper.get("emoji", "📄")}</span>
-            <span class="{utility_class} utility-sm">{paper.get("clinical_utility", "中")}</span>
+            <span class="emoji-sm">{paper.get("emoji", "\U0001f4c4")}</span>
+            <span class="{utility_class} utility-sm">{paper.get("clinical_utility", "\u4e2d")}</span>
           </div>
           <h3>{paper.get("title_zh", paper.get("title_en", ""))}</h3>
           <p class="journal-source">{paper.get("journal", "")}</p>
           <p>{paper.get("summary", "")}</p>
           <div class="card-footer">
             {tags_html}
-            <a href="{paper.get("url", "#")}" target="_blank">PubMed →</a>
+            <a href="{paper.get("url", "#")}" target="_blank">PubMed \u2192</a>
           </div>
         </div>"""
 
@@ -234,8 +264,8 @@ def generate_html(analysis: dict) -> str:
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Psychiatry Brain · 精神醫學文獻日報 · {date_display}</title>
-<meta name="description" content="{date_display} 精神醫學文獻日報，由 AI 自動彙整 PubMed 最新論文"/>
+<title>Psychiatry Brain &middot; \u7cbe\u795e\u91ab\u5b78\u6587\u737b\u65e5\u5831 &middot; {date_display}</title>
+<meta name="description" content="{date_display} \u7cbe\u795e\u91ab\u5b78\u6587\u737b\u65e5\u5831\uff0c\u7531 AI \u81ea\u52d5\u5f59\u6574 PubMed \u6700\u65b0\u8ad6\u6587"/>
 <style>
   *, *::before, *::after {{ box-sizing: border-box; margin: 0; padding: 0; }}
   body {{ background: #000; color: #E3F2FD; font-family: -apple-system, "PingFang TC", "Helvetica Neue", Arial, sans-serif; min-height: 100vh; overflow-x: hidden; }}
@@ -303,30 +333,30 @@ def generate_html(analysis: dict) -> str:
   <header>
     <div class="logo">🧠</div>
     <div class="header-text">
-      <h1>Psychiatry Brain · 精神醫學文獻日報</h1>
+      <h1>Psychiatry Brain &middot; \u7cbe\u795e\u91ab\u5b78\u6587\u737b\u65e5\u5831</h1>
       <div class="header-meta">
         <span class="badge badge-date">📅 {date_display}</span>
-        <span class="badge badge-count">📊 {total_count} 篇文獻</span>
+        <span class="badge badge-count">📊 {total_count} \u7bc7\u6587\u737b</span>
         <span class="badge badge-source">Powered by PubMed + Gemma AI</span>
       </div>
     </div>
   </header>
 
   <div class="summary-card">
-    <h2>📋 今日文獻趨勢</h2>
+    <h2>📋 \u4eca\u65e5\u6587\u737b\u8da8\u52e2</h2>
     <p class="summary-text">{summary}</p>
   </div>
 
-  {"<div class='section'><div class='section-title'><span class='section-icon'>⭐</span>今日精選 TOP Picks</div>" + top_picks_html + "</div>" if top_picks_html else ""}
+  {"<div class='section'><div class='section-title'><span class='section-icon'>⭐</span>\u4eca\u65e5\u7cbe\u9078 TOP Picks</div>" + top_picks_html + "</div>" if top_picks_html else ""}
 
-  {"<div class='section'><div class='section-title'><span class='section-icon'>📚</span>其他值得關注的文獻</div>" + all_papers_html + "</div>" if all_papers_html else ""}
+  {"<div class='section'><div class='section-title'><span class='section-icon'>📚</span>\u5176\u4ed6\u503c\u5f97\u95dc\u6ce8\u7684\u6587\u737b</div>" + all_papers_html + "</div>" if all_papers_html else ""}
 
-  {"<div class='topic-section section'><div class='section-title'><span class='section-icon'>📊</span>主題分佈</div>" + topic_bars_html + "</div>" if topic_bars_html else ""}
+  {"<div class='topic-section section'><div class='section-title'><span class='section-icon'>📊</span>\u4e3b\u984c\u5206\u4f48</div>" + topic_bars_html + "</div>" if topic_bars_html else ""}
 
-  {"<div class='keywords-section section'><div class='section-title'><span class='section-icon'>🏷️</span>關鍵字</div><div class='keywords'>" + keywords_html + "</div></div>" if keywords_html else ""}
+  {"<div class='keywords-section section'><div class='section-title'><span class='section-icon'>🏷️</span>\u95dc\u9375\u5b57</div><div class='keywords'>" + keywords_html + "</div></div>" if keywords_html else ""}
 
   <footer>
-    <span>資料來源：PubMed · 分析模型：{MODEL_NAME}</span>
+    <span>\u8cc7\u6599\u4f86\u6e90\uff1aPubMed &middot; \u5206\u6790\u6a21\u578b\uff1a{MODEL_NAME}</span>
     <span><a href="https://github.com/u8901006/Psychiatry-brain">GitHub</a></span>
   </footer>
 </div>
@@ -359,9 +389,10 @@ def main():
     papers_data = load_papers(args.input)
     if not papers_data or not papers_data.get("papers"):
         print("[WARN] No papers found, generating empty report", file=sys.stderr)
+        tz_taipei = timezone(timedelta(hours=8))
         analysis = {
-            "date": datetime.now(timezone(timedelta(hours=8))).strftime("%Y-%m-%d"),
-            "market_summary": "今日 PubMed 暫無新的精神醫學文獻更新。請明天再查看。",
+            "date": datetime.now(tz_taipei).strftime("%Y-%m-%d"),
+            "market_summary": "\u4eca\u65e5 PubMed \u66ab\u7121\u65b0\u7684\u7cbe\u795e\u91ab\u5b78\u6587\u737b\u66f4\u65b0\u3002\u8acb\u660e\u5929\u518d\u67e5\u770b\u3002",
             "top_picks": [],
             "all_papers": [],
             "keywords": [],
@@ -374,6 +405,7 @@ def main():
             sys.exit(1)
 
     html = generate_html(analysis)
+    os.makedirs(os.path.dirname(args.output) or ".", exist_ok=True)
     with open(args.output, "w", encoding="utf-8") as f:
         f.write(html)
     print(f"[INFO] Report saved to {args.output}", file=sys.stderr)
