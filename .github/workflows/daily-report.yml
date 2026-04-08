@@ -1,0 +1,158 @@
+name: Psychiatry Daily Report
+
+on:
+  schedule:
+    - cron: "0 22 * * *" # UTC 22:00 =?啣??? 06:00
+  workflow_dispatch:
+    inputs:
+      date:
+        description: "Target date (YYYY-MM-DD), leave empty for today"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('scripts/requirements.txt') }}
+          restore-keys: ${{ runner.os }}-pip-
+
+      - name: Install dependencies
+        run: pip install -r scripts/requirements.txt
+
+      - name: Determine date
+        id: date
+        run: |
+          if [ -n "${{ github.event.inputs.date }}" ]; then
+            echo "target=${{ github.event.inputs.date }}" >> $GITHUB_OUTPUT
+          else
+            TARGET=$(TZ=Asia/Taipei date +%Y-%m-%d)
+            echo "target=$TARGET" >> $GITHUB_OUTPUT
+          fi
+          echo "Date: $(cat $GITHUB_OUTPUT | grep target | cut -d= -f2)"
+
+      - name: Fetch papers from PubMed
+        run: |
+          python scripts/fetch_papers.py \
+            --days 7 \
+            --max-papers 40 \
+            --json \
+            --output papers.json
+        continue-on-error: true
+
+      - name: Check papers data
+        id: papers
+        run: |
+          if [ -f papers.json ] && grep -q '"count"' papers.json; then
+            COUNT=$(python -c "import json; print(json.load(open('papers.json')).get('count',0))")
+            echo "count=$COUNT" >> $GITHUB_OUTPUT
+            echo "Papers found: $COUNT"
+          else
+            echo "count=0" >> $GITHUB_OUTPUT
+            echo '{"date":"${{ steps.date.outputs.target }}","count":0,"papers":[]}' > papers.json
+            echo "No papers found, will generate empty report"
+          fi
+
+      - name: Generate report with Gemma AI
+        env:
+          GEMMA_API_KEY: ${{ secrets.GEMMA_API_KEY }}
+        run: |
+          python scripts/generate_report.py \
+            --input papers.json \
+            --output docs/psychiatry-${{ steps.date.outputs.target }}.html \
+            --api-key "$GEMMA_API_KEY"
+
+      - name: Generate index page
+        run: |
+          python -c "
+          import os, glob, json
+          from datetime import datetime
+
+          html_files = sorted(glob.glob('docs/psychiatry-*.html'), reverse=True)
+          links = ''
+          for f in html_files[:30]:
+              name = os.path.basename(f)
+              date = name.replace('psychiatry-','').replace('.html','')
+              try:
+                  d = datetime.strptime(date, '%Y-%m-%d')
+                  date_display = d.strftime('%Y撟?-m??-d??)
+              except:
+                  date_display = date
+              weekday = ['銝','鈭?,'銝?,'??,'鈭?,'??,'??][datetime.strptime(date, '%Y-%m-%d').weekday()] if len(date)==10 else ''
+              links += f'<li><a href=\"{name}\">?? {date_display}嚗惋weekday}嚗?/a></li>\n'
+
+          total = len(html_files)
+          index = f'''<!DOCTYPE html>
+          <html lang=\"zh-TW\">
+          <head>
+          <meta charset=\"UTF-8\"/>
+          <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"/>
+          <title>Psychiatry Brain 繚 蝎曄??怠飛??亙</title>
+          <style>
+            *, *::before, *::after {{ box-sizing: border-box; margin: 0; padding: 0; }}
+            body {{ background: #000; color: #E3F2FD; font-family: -apple-system, \"PingFang TC\", \"Helvetica Neue\", Arial, sans-serif; min-height: 100vh; }}
+            body::before {{ content: \"\"; position: fixed; bottom: -200px; right: -200px; width: 800px; height: 800px; border-radius: 50%; background: radial-gradient(circle, rgba(107,152,255,0.08) 0%, transparent 70%); pointer-events: none; }}
+            .container {{ position: relative; z-index: 1; max-width: 640px; margin: 0 auto; padding: 80px 24px; }}
+            .logo {{ font-size: 48px; text-align: center; margin-bottom: 16px; }}
+            h1 {{ text-align: center; font-size: 24px; color: #fff; margin-bottom: 8px; }}
+            .subtitle {{ text-align: center; color: #6B98FF; font-size: 14px; margin-bottom: 48px; }}
+            .count {{ text-align: center; color: #546E7A; font-size: 13px; margin-bottom: 32px; }}
+            ul {{ list-style: none; }}
+            li {{ margin-bottom: 8px; }}
+            a {{ color: #E3F2FD; text-decoration: none; display: block; padding: 14px 20px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 12px; transition: all 0.2s; font-size: 15px; }}
+            a:hover {{ background: rgba(107,152,255,0.08); border-color: rgba(107,152,255,0.2); transform: translateX(4px); }}
+            footer {{ margin-top: 56px; text-align: center; font-size: 12px; color: #37474F; }}
+            footer a {{ display: inline; padding: 0; background: none; border: none; color: #546E7A; }}
+            footer a:hover {{ color: #6B98FF; }}
+          </style>
+          </head>
+          <body>
+          <div class=\"container\">
+            <div class=\"logo\">??</div>
+            <h1>Psychiatry Brain</h1>
+            <p class=\"subtitle\">蝎曄??怠飛??亙 繚 瘥?芸??湔</p>
+            <p class=\"count\">??{total} ???/p>
+            <ul>{links}</ul>
+            <footer>
+              <p>Powered by PubMed + Gemma AI 繚 <a href=\"https://github.com/u8901006/Psychiatry-brain\">GitHub</a></p>
+            </footer>
+          </div>
+          </body>
+          </html>'''
+          with open('docs/index.html', 'w', encoding='utf-8') as f:
+              f.write(index)
+          print('Index page generated')
+          "
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/
+          git diff --cached --quiet && echo "No changes to commit" && exit 0
+          git commit -m "?? psychiatry daily report: ${{ steps.date.outputs.target }}"
+          git push
+
+      - name: Summary
+        run: |
+          echo "### ?? Psychiatry Daily Report" >> $GITHUB_STEP_SUMMARY
+          echo "**Date:** ${{ steps.date.outputs.target }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Papers analyzed:** ${{ steps.papers.outputs.count }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Report:** [psychiatry-${{ steps.date.outputs.target }}.html](https://u8901006.github.io/Psychiatry-brain/psychiatry-${{ steps.date.outputs.target }}.html)" >> $GITHUB_STEP_SUMMARY
