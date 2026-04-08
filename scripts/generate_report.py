@@ -14,8 +14,8 @@ from datetime import datetime, timezone, timedelta
 from google import genai
 from google.genai import types
 
-MODEL_NAME = "gemma-3-27b-it"
-FALLBACK_MODEL = "gemini-2.0-flash"
+MODEL_NAME = "gemini-2.0-flash"
+FALLBACK_MODEL = "gemma-3-27b-it"
 
 SYSTEM_PROMPT = (
     "你是精神醫學領域的資深研究員與科學傳播者。你的任務是：\n"
@@ -146,7 +146,7 @@ def analyze_papers(api_key: str, papers_data: dict) -> dict:
             except Exception as e:
                 err_str = str(e)
                 if "429" in err_str or "quota" in err_str.lower():
-                    wait = 30 * (attempt + 1)
+                    wait = 60 * (attempt + 1)
                     print(f"[WARN] Rate limited, waiting {wait}s...", file=sys.stderr)
                     time.sleep(wait)
                     continue
