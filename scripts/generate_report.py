@@ -14,11 +14,17 @@ import google.generativeai as genai
 
 MODEL_NAME = "gemma-3-27b-it"
 
-SYSTEM_PROMPT = """雿蝎曄??怠飛????瘛梁?蝛嗅??摮詨?剛??遙?嚗?1. 敺?靘??怠飛?銝哨?蝭拚?箸??瑁摨?蝢抵??弦?孵潛?隢?
-2. 撠?蝭??脰?蝜?銝剜?????憿ICO ??
-3. 閰摯?嗉摨祕?冽改?擃?銝?雿?
-4. ???拙??怎?撠平鈭箏?梯????
-頛詨?澆?閬?嚗?- 隤?嚗?擃葉???啁?刻?嚗?- 撠平雿???- 瘥?隢???嚗葉??憿??亥店蝮賜??ICO???摨祕?冽扼?憿?蝐?- ?敺?靘??亦移??TOP 3嚗???/?敶梢?典?撖西?????
+SYSTEM_PROMPT = """你是精神醫學領域的資深研究員與科學傳播者。你的任務是：
+1. 從提供的醫學文獻中，篩選出最具臨床意義與研究價值的論文
+2. 對每篇論文進行繁體中文摘要、分類、PICO 分析
+3. 評估其臨床實用性（高/中/低）
+4. 生成適合醫療專業人員閱讀的日報
+
+輸出格式要求：
+- 語言：繁體中文（台灣用語）
+- 專業但易懂
+- 每篇論文需包含：中文標題、一句話總結、PICO分析、臨床實用性、分類標籤
+- 最後提供今日精選 TOP 3（最重要/最影響臨床實踐的論文）
 """
 
 
@@ -51,53 +57,58 @@ def analyze_papers(api_key: str, papers_data: dict) -> dict:
         "date", datetime.now(timezone(timedelta(hours=8))).strftime("%Y-%m-%d")
     )
 
-    prompt = f"""隞乩???{date_str} 敺?PubMed ?????啁移蟡摮豢??鳴???{papers_data.get("count", 0)} 蝭???
-隢脰?隞乩???嚗蒂隞?JSON ?澆??嚗?
+    prompt = f"""以下是 {date_str} 從 PubMed 抓取的最新精神醫學文獻（共 {papers_data.get("count", 0)} 篇）。
+
+請進行以下分析，並以 JSON 格式回傳：
+
 {{
   "date": "{date_str}",
-  "market_summary": "1-2?亥店蝮賜?隞予??擃隅?Ｚ?鈭桅?",
+  "market_summary": "1-2句話總結今天文獻的整體趨勢與亮點",
   "top_picks": [
     {{
       "rank": 1,
-      "title_zh": "銝剜?璅?",
+      "title_zh": "中文標題",
       "title_en": "English Title",
-      "journal": "????,
-      "summary": "銝?亥店蝮賜?嚗?擃葉??暺?詨??潛?摨?蝢抬?",
+      "journal": "期刊名",
+      "summary": "一句話總結（繁體中文，點出核心發現與臨床意義）",
       "pico": {{
-        "population": "?弦撠情",
-        "intervention": "隞?芣",
-        "comparison": "撠蝯?,
-        "outcome": "銝餉?蝯?"
+        "population": "研究對象",
+        "intervention": "介入措施",
+        "comparison": "對照組",
+        "outcome": "主要結果"
       }},
-      "clinical_utility": "擃?銝?雿?,
-      "utility_reason": "?箔?暻澆祕?函?銝?亥店隤芣?",
-      "tags": ["璅惜1", "璅惜2"],
-      "url": "?????",
-      "emoji": "?賊?emoji"
+      "clinical_utility": "高/中/低",
+      "utility_reason": "為什麼實用的一句話說明",
+      "tags": ["標籤1", "標籤2"],
+      "url": "原文連結",
+      "emoji": "相關emoji"
     }}
   ],
   "all_papers": [
     {{
-      "title_zh": "銝剜?璅?",
+      "title_zh": "中文標題",
       "title_en": "English Title",
-      "journal": "????,
-      "summary": "銝?亥店蝮賜?",
-      "clinical_utility": "擃?銝?雿?,
-      "tags": ["璅惜1"],
-      "url": "???",
+      "journal": "期刊名",
+      "summary": "一句話總結",
+      "clinical_utility": "高/中/低",
+      "tags": ["標籤1"],
+      "url": "連結",
       "emoji": "emoji"
     }}
   ],
-  "keywords": ["?摮?", "?摮?", "?摮?"],
+  "keywords": ["關鍵字1", "關鍵字2", "關鍵字3"],
   "topic_distribution": {{
-    "?炳??: 3,
-    "蝎曄?????: 2
+    "憂鬱症": 3,
+    "精神分裂症": 2
   }}
 }}
 
-???鞈?嚗?{papers_text}
+原始文獻資料：
+{papers_text}
 
-隢祟?詨?????TOP 5-8 蝭????top_picks嚗????扳?摨?嚗擗??all_papers??瘥? paper ??tags 隢?隞乩??豢?嚗?擛梁??移蟡?鋆????豢?蝺?蝷?桃??TSD?撥餈怎????柴??祥?畾粹瘝颯?撠移蟡摮詻???DHD?移蟡?飛??蝬?摮詻?恣?圾?Ｙ???摮詻僑蝎曄??怠飛?冗?蝎曄??怠飛?楊??蝎曄??怠飛??"""
+請篩選出最重要的 TOP 5-8 篇論文放入 top_picks（按重要性排序），其餘放入 all_papers。
+每篇 paper 的 tags 請從以下選擇：憂鬱症、精神分裂症、雙相情緒障礙、焦慮症、PTSD、強迫症、成癮、心理治療、自殺防治、兒少精神醫學、自閉症、ADHD、精神藥理學、神經科學、疼痛管理、解離症、睡眠醫學、老年精神醫學、社區精神醫學、跨文化精神醫學。
+"""
 
     print(f"[INFO] Sending to {MODEL_NAME} for analysis...", file=sys.stderr)
     try:
@@ -123,12 +134,12 @@ def generate_html(analysis: dict) -> str:
         "date", datetime.now(timezone(timedelta(hours=8))).strftime("%Y-%m-%d")
     )
     date_display = (
-        datetime.strptime(date_str, "%Y-%m-%d").strftime("%Y撟?-m??-d??)
+        datetime.strptime(date_str, "%Y-%m-%d").strftime("%Y年%-m月%-d日")
         if "-" in date_str
         else date_str
     )
 
-    summary = analysis.get("market_summary", "隞?怎??湔??)
+    summary = analysis.get("market_summary", "今日暫無文獻更新。")
     top_picks = analysis.get("top_picks", [])
     all_papers = analysis.get("all_papers", [])
     keywords = analysis.get("keywords", [])
@@ -141,9 +152,9 @@ def generate_html(analysis: dict) -> str:
         )
         utility_class = (
             "utility-high"
-            if pick.get("clinical_utility") == "擃?
+            if pick.get("clinical_utility") == "高"
             else (
-                "utility-mid" if pick.get("clinical_utility") == "銝? else "utility-low"
+                "utility-mid" if pick.get("clinical_utility") == "中" else "utility-low"
             )
         )
         pico = pick.get("pico", {})
@@ -161,16 +172,16 @@ def generate_html(analysis: dict) -> str:
         <div class="news-card featured">
           <div class="card-header">
             <span class="rank-badge">#{pick.get("rank", "")}</span>
-            <span class="emoji-icon">{pick.get("emoji", "??")}</span>
-            <span class="{utility_class}">{pick.get("clinical_utility", "銝?)}撖衣??/span>
+            <span class="emoji-icon">{pick.get("emoji", "📄")}</span>
+            <span class="{utility_class}">{pick.get("clinical_utility", "中")}實用性</span>
           </div>
           <h3>{pick.get("title_zh", pick.get("title_en", ""))}</h3>
-          <p class="journal-source">{pick.get("journal", "")} 繚 {pick.get("title_en", "")}</p>
+          <p class="journal-source">{pick.get("journal", "")} · {pick.get("title_en", "")}</p>
           <p>{pick.get("summary", "")}</p>
           {pico_html}
           <div class="card-footer">
             {tags_html}
-            <a href="{pick.get("url", "#")}" target="_blank">?梯??? ??/a>
+            <a href="{pick.get("url", "#")}" target="_blank">閱讀原文 →</a>
           </div>
         </div>"""
 
@@ -181,25 +192,25 @@ def generate_html(analysis: dict) -> str:
         )
         utility_class = (
             "utility-high"
-            if paper.get("clinical_utility") == "擃?
+            if paper.get("clinical_utility") == "高"
             else (
                 "utility-mid"
-                if paper.get("clinical_utility") == "銝?
+                if paper.get("clinical_utility") == "中"
                 else "utility-low"
             )
         )
         all_papers_html += f"""
         <div class="news-card">
           <div class="card-header-row">
-            <span class="emoji-sm">{paper.get("emoji", "??")}</span>
-            <span class="{utility_class} utility-sm">{paper.get("clinical_utility", "銝?)}</span>
+            <span class="emoji-sm">{paper.get("emoji", "📄")}</span>
+            <span class="{utility_class} utility-sm">{paper.get("clinical_utility", "中")}</span>
           </div>
           <h3>{paper.get("title_zh", paper.get("title_en", ""))}</h3>
           <p class="journal-source">{paper.get("journal", "")}</p>
           <p>{paper.get("summary", "")}</p>
           <div class="card-footer">
             {tags_html}
-            <a href="{paper.get("url", "#")}" target="_blank">PubMed ??/a>
+            <a href="{paper.get("url", "#")}" target="_blank">PubMed →</a>
           </div>
         </div>"""
 
@@ -223,8 +234,8 @@ def generate_html(analysis: dict) -> str:
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Psychiatry Brain 繚 蝎曄??怠飛??亙 繚 {date_display}</title>
-<meta name="description" content="{date_display} 蝎曄??怠飛??亙嚗 AI ?芸?敶 PubMed ??啗???/>
+<title>Psychiatry Brain · 精神醫學文獻日報 · {date_display}</title>
+<meta name="description" content="{date_display} 精神醫學文獻日報，由 AI 自動彙整 PubMed 最新論文"/>
 <style>
   *, *::before, *::after {{ box-sizing: border-box; margin: 0; padding: 0; }}
   body {{ background: #000; color: #E3F2FD; font-family: -apple-system, "PingFang TC", "Helvetica Neue", Arial, sans-serif; min-height: 100vh; overflow-x: hidden; }}
@@ -290,32 +301,32 @@ def generate_html(analysis: dict) -> str:
 <body>
 <div class="container">
   <header>
-    <div class="logo">??</div>
+    <div class="logo">🧠</div>
     <div class="header-text">
-      <h1>Psychiatry Brain 繚 蝎曄??怠飛??亙</h1>
+      <h1>Psychiatry Brain · 精神醫學文獻日報</h1>
       <div class="header-meta">
-        <span class="badge badge-date">?? {date_display}</span>
-        <span class="badge badge-count">?? {total_count} 蝭???/span>
+        <span class="badge badge-date">📅 {date_display}</span>
+        <span class="badge badge-count">📊 {total_count} 篇文獻</span>
         <span class="badge badge-source">Powered by PubMed + Gemma AI</span>
       </div>
     </div>
   </header>
 
   <div class="summary-card">
-    <h2>?? 隞?頞典</h2>
+    <h2>📋 今日文獻趨勢</h2>
     <p class="summary-text">{summary}</p>
   </div>
 
-  {"<div class='section'><div class='section-title'><span class='section-icon'>潃?/span>隞蝎暸 TOP Picks</div>" + top_picks_html + "</div>" if top_picks_html else ""}
+  {"<div class='section'><div class='section-title'><span class='section-icon'>⭐</span>今日精選 TOP Picks</div>" + top_picks_html + "</div>" if top_picks_html else ""}
 
-  {"<div class='section'><div class='section-title'><span class='section-icon'>??</span>?嗡??澆??釣????/div>" + all_papers_html + "</div>" if all_papers_html else ""}
+  {"<div class='section'><div class='section-title'><span class='section-icon'>📚</span>其他值得關注的文獻</div>" + all_papers_html + "</div>" if all_papers_html else ""}
 
-  {"<div class='topic-section section'><div class='section-title'><span class='section-icon'>??</span>銝駁???</div>" + topic_bars_html + "</div>" if topic_bars_html else ""}
+  {"<div class='topic-section section'><div class='section-title'><span class='section-icon'>📊</span>主題分佈</div>" + topic_bars_html + "</div>" if topic_bars_html else ""}
 
-  {"<div class='keywords-section section'><div class='section-title'><span class='section-icon'>?儭?/span>?摮?/div><div class='keywords'>" + keywords_html + "</div></div>" if keywords_html else ""}
+  {"<div class='keywords-section section'><div class='section-title'><span class='section-icon'>🏷️</span>關鍵字</div><div class='keywords'>" + keywords_html + "</div></div>" if keywords_html else ""}
 
   <footer>
-    <span>鞈?靘?嚗ubMed 繚 ??璅∪?嚗MODEL_NAME}</span>
+    <span>資料來源：PubMed · 分析模型：{MODEL_NAME}</span>
     <span><a href="https://github.com/u8901006/Psychiatry-brain">GitHub</a></span>
   </footer>
 </div>
@@ -350,7 +361,7 @@ def main():
         print("[WARN] No papers found, generating empty report", file=sys.stderr)
         analysis = {
             "date": datetime.now(timezone(timedelta(hours=8))).strftime("%Y-%m-%d"),
-            "market_summary": "隞 PubMed ?怎?啁?蝎曄??怠飛??湔???予???,
+            "market_summary": "今日 PubMed 暫無新的精神醫學文獻更新。請明天再查看。",
             "top_picks": [],
             "all_papers": [],
             "keywords": [],
