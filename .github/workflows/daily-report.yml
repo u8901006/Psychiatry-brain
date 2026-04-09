@@ -70,14 +70,14 @@ jobs:
             echo "No papers found, will generate empty report"
           fi
 
-      - name: Generate report with Gemma AI
+      - name: Generate report with Zhipu AI
         env:
-          GEMMA_API_KEY: ${{ secrets.GEMMA_API_KEY }}
+          ZHIPU_API_KEY: ${{ secrets.ZHIPU_API_KEY }}
         run: |
           python scripts/generate_report.py \
             --input papers.json \
             --output docs/psychiatry-${{ steps.date.outputs.target }}.html \
-            --api-key "$GEMMA_API_KEY"
+            --api-key "$ZHIPU_API_KEY"
 
       - name: Generate index page
         run: |
@@ -131,7 +131,7 @@ jobs:
             <p class=\"count\">共 {total} 期日報</p>
             <ul>{links}</ul>
             <footer>
-              <p>Powered by PubMed + Gemma AI · <a href=\"https://github.com/u8901006/Psychiatry-brain\">GitHub</a></p>
+              <p>Powered by PubMed + Zhipu AI · <a href=\"https://github.com/u8901006/Psychiatry-brain\">GitHub</a></p>
             </footer>
           </div>
           </body>
