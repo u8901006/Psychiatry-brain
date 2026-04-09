@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Generate psychiatry daily report HTML using Google GenAI (Gemma).
+Generate psychiatry daily report HTML using Zhipu AI.
 Reads papers JSON, analyzes with AI, generates styled HTML.
 """
 
@@ -11,11 +11,12 @@ import time
 import argparse
 from datetime import datetime, timezone, timedelta
 
-from google import genai
-from google.genai import types
+import httpx
 
-MODEL_NAME = "gemini-2.0-flash"
-FALLBACK_MODEL = "gemma-3-27b-it"
+API_BASE = os.environ.get(
+    "ZHIPU_API_BASE", "https://open.bigmodel.cn/api/coding/paas/v4"
+)
+MODEL_NAME = os.environ.get("ZHIPU_MODEL", "glm-4-plus")
 
 SYSTEM_PROMPT = (
     "你是精神醫學領域的資深研究員與科學傳播者。你的任務是：\n"
@@ -42,14 +43,12 @@ def load_papers(input_path: str) -> dict:
 
 
 def analyze_papers(api_key: str, papers_data: dict) -> dict:
-    client = genai.Client(api_key=api_key)
-
-    papers_text = json.dumps(
-        papers_data.get("papers", []), ensure_ascii=False, indent=2
-    )
     tz_taipei = timezone(timedelta(hours=8))
     date_str = papers_data.get("date", datetime.now(tz_taipei).strftime("%Y-%m-%d"))
     paper_count = papers_data.get("count", 0)
+    papers_text = json.dumps(
+        papers_data.get("papers", []), ensure_ascii=False, indent=2
+    )
 
     prompt = f"""以下是 {date_str} 從 PubMed 抓取的最新精神醫學文獻（共 {paper_count} 篇）。
 
@@ -104,26 +103,45 @@ def analyze_papers(api_key: str, papers_data: dict) -> dict:
 每篇 paper 的 tags 請從以下選擇：憂鬱症、精神分裂症、雙相情緒障礙、焦慮症、PTSD、強迫症、成癮、心理治療、自殺防治、兒少精神醫學、自閉症、ADHD、精神藥理學、神經科學、疼痛管理、解離症、睡眠醫學、老年精神醫學、社區精神醫學、跨文化精神醫學。
 記住：回傳純 JSON，不要用 ```json``` 包裹。"""
 
-    models_to_try = [MODEL_NAME, FALLBACK_MODEL]
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json",
+    }
 
-    for model_name in models_to_try:
+    payload = {
+        "model": MODEL_NAME,
+        "messages": [
+            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "user", "content": prompt},
+        ],
+        "temperature": 0.3,
+        "top_p": 0.9,
+        "max_tokens": 8192,
+    }
+
+    models_to_try = [MODEL_NAME, "glm-4-flash", "glm-4"]
+
+    for model in models_to_try:
+        payload["model"] = model
         for attempt in range(3):
             try:
                 print(
-                    f"[INFO] Trying {model_name} (attempt {attempt + 1})...",
-                    file=sys.stderr,
+                    f"[INFO] Trying {model} (attempt {attempt + 1})...", file=sys.stderr
                 )
-                response = client.models.generate_content(
-                    model=model_name,
-                    contents=prompt,
-                    config=types.GenerateContentConfig(
-                        system_instruction=SYSTEM_PROMPT,
-                        temperature=0.3,
-                        top_p=0.9,
-                        max_output_tokens=8192,
-                    ),
+                resp = httpx.post(
+                    f"{API_BASE}/chat/completions",
+                    headers=headers,
+                    json=payload,
+                    timeout=120,
                 )
-                text = response.text.strip()
+                if resp.status_code == 429:
+                    wait = 60 * (attempt + 1)
+                    print(f"[WARN] Rate limited, waiting {wait}s...", file=sys.stderr)
+                    time.sleep(wait)
+                    continue
+                resp.raise_for_status()
+                data = resp.json()
+                text = data["choices"][0]["message"]["content"].strip()
                 if text.startswith("```"):
                     text = text.split("\n", 1)[1] if "\n" in text else text[3:]
                     text = text.rstrip("`").strip()
@@ -143,14 +161,18 @@ def analyze_papers(api_key: str, papers_data: dict) -> dict:
                 if attempt < 2:
                     time.sleep(5)
                 continue
-            except Exception as e:
-                err_str = str(e)
-                if "429" in err_str or "quota" in err_str.lower():
+            except httpx.HTTPStatusError as e:
+                print(
+                    f"[ERROR] HTTP {e.response.status_code}: {e.response.text[:200]}",
+                    file=sys.stderr,
+                )
+                if e.response.status_code == 429:
                     wait = 60 * (attempt + 1)
-                    print(f"[WARN] Rate limited, waiting {wait}s...", file=sys.stderr)
                     time.sleep(wait)
                     continue
-                print(f"[ERROR] {model_name} failed: {e}", file=sys.stderr)
+                break
+            except Exception as e:
+                print(f"[ERROR] {model} failed: {e}", file=sys.stderr)
                 break
 
     print("[ERROR] All models and attempts failed", file=sys.stderr)
@@ -163,7 +185,9 @@ def generate_html(analysis: dict) -> str:
     )
     date_parts = date_str.split("-")
     if len(date_parts) == 3:
-        date_display = f"{date_parts[0]}年{int(date_parts[1])}月{int(date_parts[2])}日"
+        date_display = (
+            f"{date_parts[0]}\u5e74{int(date_parts[1])}\u6708{int(date_parts[2])}\u65e5"
+        )
     else:
         date_display = date_str
 
@@ -178,14 +202,11 @@ def generate_html(analysis: dict) -> str:
         tags_html = "".join(
             f'<span class="tag">{t}</span>' for t in pick.get("tags", [])
         )
+        util = pick.get("clinical_utility", "\u4e2d")
         utility_class = (
             "utility-high"
-            if pick.get("clinical_utility") == "\u9ad8"
-            else (
-                "utility-mid"
-                if pick.get("clinical_utility") == "\u4e2d"
-                else "utility-low"
-            )
+            if util == "\u9ad8"
+            else ("utility-mid" if util == "\u4e2d" else "utility-low")
         )
         pico = pick.get("pico", {})
         pico_html = ""
@@ -203,7 +224,7 @@ def generate_html(analysis: dict) -> str:
           <div class="card-header">
             <span class="rank-badge">#{pick.get("rank", "")}</span>
             <span class="emoji-icon">{pick.get("emoji", "\U0001f4c4")}</span>
-            <span class="{utility_class}">{pick.get("clinical_utility", "\u4e2d")}\u5b9e\u7528\u6027</span>
+            <span class="{utility_class}">{util}\u5b9e\u7528\u6027</span>
           </div>
           <h3>{pick.get("title_zh", pick.get("title_en", ""))}</h3>
           <p class="journal-source">{pick.get("journal", "")} &middot; {pick.get("title_en", "")}</p>
@@ -220,20 +241,17 @@ def generate_html(analysis: dict) -> str:
         tags_html = "".join(
             f'<span class="tag">{t}</span>' for t in paper.get("tags", [])
         )
+        util = paper.get("clinical_utility", "\u4e2d")
         utility_class = (
             "utility-high"
-            if paper.get("clinical_utility") == "\u9ad8"
-            else (
-                "utility-mid"
-                if paper.get("clinical_utility") == "\u4e2d"
-                else "utility-low"
-            )
+            if util == "\u9ad8"
+            else ("utility-mid" if util == "\u4e2d" else "utility-low")
         )
         all_papers_html += f"""
         <div class="news-card">
           <div class="card-header-row">
             <span class="emoji-sm">{paper.get("emoji", "\U0001f4c4")}</span>
-            <span class="{utility_class} utility-sm">{paper.get("clinical_utility", "\u4e2d")}</span>
+            <span class="{utility_class} utility-sm">{util}</span>
           </div>
           <h3>{paper.get("title_zh", paper.get("title_en", ""))}</h3>
           <p class="journal-source">{paper.get("journal", "")}</p>
@@ -337,7 +355,7 @@ def generate_html(analysis: dict) -> str:
       <div class="header-meta">
         <span class="badge badge-date">📅 {date_display}</span>
         <span class="badge badge-count">📊 {total_count} \u7bc7\u6587\u737b</span>
-        <span class="badge badge-source">Powered by PubMed + Gemma AI</span>
+        <span class="badge badge-source">Powered by PubMed + Zhipu AI</span>
       </div>
     </div>
   </header>
@@ -373,15 +391,13 @@ def main():
     parser.add_argument("--input", required=True, help="Input papers JSON file")
     parser.add_argument("--output", required=True, help="Output HTML file")
     parser.add_argument(
-        "--api-key",
-        default=os.environ.get("GEMMA_API_KEY", ""),
-        help="Google AI API key",
+        "--api-key", default=os.environ.get("ZHIPU_API_KEY", ""), help="Zhipu API key"
     )
     args = parser.parse_args()
 
     if not args.api_key:
         print(
-            "[ERROR] No API key provided. Set GEMMA_API_KEY env var or use --api-key",
+            "[ERROR] No API key provided. Set ZHIPU_API_KEY env var or use --api-key",
             file=sys.stderr,
         )
         sys.exit(1)
