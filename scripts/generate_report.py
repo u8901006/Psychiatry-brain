@@ -285,62 +285,61 @@ def generate_html(analysis: dict) -> str:
 <title>Psychiatry Brain &middot; \u7cbe\u795e\u91ab\u5b78\u6587\u737b\u65e5\u5831 &middot; {date_display}</title>
 <meta name="description" content="{date_display} \u7cbe\u795e\u91ab\u5b78\u6587\u737b\u65e5\u5831\uff0c\u7531 AI \u81ea\u52d5\u5f59\u6574 PubMed \u6700\u65b0\u8ad6\u6587"/>
 <style>
+  :root {{ --bg: #f6f1e8; --surface: #fffaf2; --line: #d8c5ab; --text: #2b2118; --muted: #766453; --accent: #8c4f2b; --accent-soft: #ead2bf; --card-bg: color-mix(in srgb, var(--surface) 92%, white); }}
   *, *::before, *::after {{ box-sizing: border-box; margin: 0; padding: 0; }}
-  body {{ background: #000; color: #E3F2FD; font-family: -apple-system, "PingFang TC", "Helvetica Neue", Arial, sans-serif; min-height: 100vh; overflow-x: hidden; }}
-  body::before {{ content: ''; position: fixed; bottom: -200px; right: -200px; width: 800px; height: 800px; border-radius: 50%; background: radial-gradient(circle, rgba(107,152,255,0.08) 0%, transparent 70%); pointer-events: none; z-index: 0; }}
-  body::after {{ content: ''; position: fixed; top: -200px; left: -200px; width: 600px; height: 600px; border-radius: 50%; background: radial-gradient(circle, rgba(107,255,168,0.05) 0%, transparent 70%); pointer-events: none; z-index: 0; }}
+  body {{ background: radial-gradient(circle at top, #fff6ea 0, var(--bg) 55%, #ead8c6 100%); color: var(--text); font-family: "Noto Sans TC", "PingFang TC", "Helvetica Neue", Arial, sans-serif; min-height: 100vh; overflow-x: hidden; }}
   .container {{ position: relative; z-index: 1; max-width: 880px; margin: 0 auto; padding: 60px 32px 80px; }}
   header {{ display: flex; align-items: center; gap: 16px; margin-bottom: 52px; animation: fadeDown 0.6s ease both; }}
-  .logo {{ width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(135deg, #6B98FF 0%, #6BFFA8 100%); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; box-shadow: 0 4px 20px rgba(107,152,255,0.3); }}
-  .header-text h1 {{ font-family: -apple-system, "SF Pro Display", sans-serif; font-size: 22px; font-weight: 700; color: #fff; letter-spacing: -0.3px; }}
+  .logo {{ width: 48px; height: 48px; border-radius: 14px; background: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; box-shadow: 0 4px 20px rgba(140,79,43,0.25); }}
+  .header-text h1 {{ font-size: 22px; font-weight: 700; color: var(--text); letter-spacing: -0.3px; }}
   .header-meta {{ display: flex; gap: 8px; margin-top: 6px; flex-wrap: wrap; align-items: center; }}
   .badge {{ display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; letter-spacing: 0.3px; }}
-  .badge-date {{ background: rgba(107,152,255,0.15); border: 1px solid rgba(107,152,255,0.3); color: #6B98FF; }}
-  .badge-count {{ background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: #90A4AE; }}
-  .badge-source {{ background: transparent; color: #546E7A; font-size: 11px; padding: 0 4px; }}
-  .summary-card {{ background: rgba(107,152,255,0.05); border: 1px solid rgba(107,152,255,0.15); border-radius: 20px; padding: 28px 32px; margin-bottom: 32px; animation: fadeUp 0.5s ease 0.1s both; }}
-  .summary-card h2 {{ font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.6px; color: #6B98FF; margin-bottom: 16px; }}
-  .summary-text {{ font-size: 15px; line-height: 1.8; color: #CFE8FF; }}
+  .badge-date {{ background: var(--accent-soft); border: 1px solid var(--line); color: var(--accent); }}
+  .badge-count {{ background: rgba(140,79,43,0.06); border: 1px solid var(--line); color: var(--muted); }}
+  .badge-source {{ background: transparent; color: var(--muted); font-size: 11px; padding: 0 4px; }}
+  .summary-card {{ background: var(--card-bg); border: 1px solid var(--line); border-radius: 24px; padding: 28px 32px; margin-bottom: 32px; box-shadow: 0 20px 60px rgba(61,36,15,0.06); animation: fadeUp 0.5s ease 0.1s both; }}
+  .summary-card h2 {{ font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.6px; color: var(--accent); margin-bottom: 16px; }}
+  .summary-text {{ font-size: 15px; line-height: 1.8; color: var(--text); }}
   .section {{ margin-bottom: 36px; animation: fadeUp 0.5s ease both; }}
-  .section-title {{ display: flex; align-items: center; gap: 10px; font-family: -apple-system, "SF Pro Display", sans-serif; font-size: 17px; font-weight: 700; color: #fff; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.07); }}
-  .section-icon {{ width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; background: rgba(107,152,255,0.15); }}
-  .news-card {{ background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 16px; padding: 22px 26px; margin-bottom: 12px; transition: background 0.2s, border-color 0.2s, transform 0.2s; }}
-  .news-card:hover {{ background: rgba(107,152,255,0.05); border-color: rgba(107,152,255,0.2); transform: translateY(-2px); }}
-  .news-card.featured {{ border-left: 3px solid #6B98FF; }}
-  .news-card.featured:hover {{ border-color: #6B98FF; background: rgba(107,152,255,0.06); }}
+  .section-title {{ display: flex; align-items: center; gap: 10px; font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }}
+  .section-icon {{ width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; background: var(--accent-soft); }}
+  .news-card {{ background: var(--card-bg); border: 1px solid var(--line); border-radius: 24px; padding: 22px 26px; margin-bottom: 12px; box-shadow: 0 8px 30px rgba(61,36,15,0.04); transition: background 0.2s, border-color 0.2s, transform 0.2s; }}
+  .news-card:hover {{ transform: translateY(-2px); box-shadow: 0 12px 40px rgba(61,36,15,0.08); }}
+  .news-card.featured {{ border-left: 3px solid var(--accent); }}
+  .news-card.featured:hover {{ border-color: var(--accent); }}
   .card-header {{ display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }}
-  .rank-badge {{ background: linear-gradient(135deg, #6B98FF, #6BFFA8); color: #000; font-weight: 700; font-size: 12px; padding: 2px 8px; border-radius: 6px; }}
+  .rank-badge {{ background: var(--accent); color: #fff7f0; font-weight: 700; font-size: 12px; padding: 2px 8px; border-radius: 6px; }}
   .emoji-icon {{ font-size: 18px; }}
   .card-header-row {{ display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }}
   .emoji-sm {{ font-size: 14px; }}
-  .news-card h3 {{ font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 8px; line-height: 1.5; }}
-  .journal-source {{ font-size: 12px; color: #6B98FF; margin-bottom: 8px; opacity: 0.7; }}
-  .news-card p {{ font-size: 13.5px; line-height: 1.75; color: #90A4AE; }}
+  .news-card h3 {{ font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 8px; line-height: 1.5; }}
+  .journal-source {{ font-size: 12px; color: var(--accent); margin-bottom: 8px; opacity: 0.8; }}
+  .news-card p {{ font-size: 13.5px; line-height: 1.75; color: var(--muted); }}
   .card-footer {{ margin-top: 12px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }}
-  .tag {{ padding: 2px 9px; background: rgba(107,152,255,0.1); border-radius: 6px; font-size: 11px; color: #6B98FF; }}
-  .news-card a {{ font-size: 12px; color: #6B98FF; text-decoration: none; opacity: 0.7; margin-left: auto; }}
+  .tag {{ padding: 2px 9px; background: var(--accent-soft); border-radius: 999px; font-size: 11px; color: var(--accent); }}
+  .news-card a {{ font-size: 12px; color: var(--accent); text-decoration: none; opacity: 0.7; margin-left: auto; }}
   .news-card a:hover {{ opacity: 1; }}
-  .utility-high {{ color: #6BFFA8; font-size: 11px; font-weight: 600; padding: 2px 8px; background: rgba(107,255,168,0.1); border-radius: 4px; }}
-  .utility-mid {{ color: #FFD166; font-size: 11px; font-weight: 600; padding: 2px 8px; background: rgba(255,209,102,0.1); border-radius: 4px; }}
-  .utility-low {{ color: #90A4AE; font-size: 11px; font-weight: 600; padding: 2px 8px; background: rgba(255,255,255,0.05); border-radius: 4px; }}
+  .utility-high {{ color: #5a7a3a; font-size: 11px; font-weight: 600; padding: 2px 8px; background: rgba(90,122,58,0.1); border-radius: 4px; }}
+  .utility-mid {{ color: #9f7a2e; font-size: 11px; font-weight: 600; padding: 2px 8px; background: rgba(159,122,46,0.1); border-radius: 4px; }}
+  .utility-low {{ color: var(--muted); font-size: 11px; font-weight: 600; padding: 2px 8px; background: rgba(118,100,83,0.08); border-radius: 4px; }}
   .utility-sm {{ font-size: 10px; }}
-  .pico-grid {{ display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; padding: 12px; background: rgba(255,255,255,0.02); border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); }}
+  .pico-grid {{ display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; padding: 12px; background: rgba(255,253,249,0.8); border-radius: 14px; border: 1px solid var(--line); }}
   .pico-item {{ display: flex; gap: 8px; align-items: baseline; }}
-  .pico-label {{ font-size: 10px; font-weight: 700; color: #6BFFA8; background: rgba(107,255,168,0.1); padding: 2px 6px; border-radius: 4px; flex-shrink: 0; }}
-  .pico-text {{ font-size: 12px; color: #B0BEC5; line-height: 1.4; }}
+  .pico-label {{ font-size: 10px; font-weight: 700; color: #fff7f0; background: var(--accent); padding: 2px 6px; border-radius: 4px; flex-shrink: 0; }}
+  .pico-text {{ font-size: 12px; color: var(--muted); line-height: 1.4; }}
   .keywords-section {{ margin-bottom: 36px; }}
   .keywords {{ display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }}
-  .keyword {{ padding: 5px 14px; background: rgba(107,152,255,0.07); border: 1px solid rgba(107,152,255,0.18); border-radius: 20px; font-size: 12px; color: #6B98FF; cursor: default; transition: background 0.2s; }}
-  .keyword:hover {{ background: rgba(107,152,255,0.15); }}
+  .keyword {{ padding: 5px 14px; background: var(--accent-soft); border: 1px solid var(--line); border-radius: 20px; font-size: 12px; color: var(--accent); cursor: default; transition: background 0.2s; }}
+  .keyword:hover {{ background: rgba(140,79,43,0.18); }}
   .topic-section {{ margin-bottom: 36px; }}
   .topic-row {{ display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }}
-  .topic-name {{ font-size: 13px; color: #B0BEC5; width: 100px; flex-shrink: 0; text-align: right; }}
-  .topic-bar-bg {{ flex: 1; height: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden; }}
-  .topic-bar {{ height: 100%; background: linear-gradient(90deg, #6B98FF, #6BFFA8); border-radius: 4px; transition: width 0.6s ease; }}
-  .topic-count {{ font-size: 12px; color: #6B98FF; width: 24px; }}
-  footer {{ margin-top: 56px; padding-top: 22px; border-top: 1px solid rgba(255,255,255,0.06); font-size: 11.5px; color: #37474F; display: flex; justify-content: space-between; animation: fadeUp 0.5s ease 0.5s both; }}
-  footer a {{ color: #546E7A; text-decoration: none; }}
-  footer a:hover {{ color: #6B98FF; }}
+  .topic-name {{ font-size: 13px; color: var(--muted); width: 100px; flex-shrink: 0; text-align: right; }}
+  .topic-bar-bg {{ flex: 1; height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; }}
+  .topic-bar {{ height: 100%; background: linear-gradient(90deg, var(--accent), #c47a4a); border-radius: 4px; transition: width 0.6s ease; }}
+  .topic-count {{ font-size: 12px; color: var(--accent); width: 24px; }}
+  footer {{ margin-top: 56px; padding-top: 22px; border-top: 1px solid var(--line); font-size: 11.5px; color: var(--muted); display: flex; justify-content: space-between; animation: fadeUp 0.5s ease 0.5s both; }}
+  footer a {{ color: var(--muted); text-decoration: none; }}
+  footer a:hover {{ color: var(--accent); }}
   @keyframes fadeDown {{ from {{ opacity: 0; transform: translateY(-16px); }} to {{ opacity: 1; transform: translateY(0); }} }}
   @keyframes fadeUp {{ from {{ opacity: 0; transform: translateY(16px); }} to {{ opacity: 1; transform: translateY(0); }} }}
   @media (max-width: 600px) {{ .container {{ padding: 36px 18px 60px; }} .summary-card, .news-card {{ padding: 20px 18px; }} .pico-grid {{ grid-template-columns: 1fr; }} footer {{ flex-direction: column; gap: 6px; text-align: center; }} .topic-name {{ width: 70px; font-size: 11px; }} }}
