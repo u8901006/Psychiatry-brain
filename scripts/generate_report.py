@@ -341,9 +341,7 @@ def generate_html(analysis: dict) -> str:
   .clinic-link {{ display: flex; align-items: center; gap: 14px; padding: 18px 24px; background: var(--card-bg); border: 1px solid var(--line); border-radius: 24px; text-decoration: none; color: var(--text); transition: all 0.2s; box-shadow: 0 8px 30px rgba(61,36,15,0.04); }}
   .clinic-link:hover {{ border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 12px 40px rgba(61,36,15,0.08); }}
   .clinic-icon {{ font-size: 28px; flex-shrink: 0; }}
-  .clinic-info {{ flex: 1; display: flex; flex-direction: column; gap: 2px; }}
-  .clinic-name {{ font-size: 15px; font-weight: 700; color: var(--text); }}
-  .clinic-url {{ font-size: 12px; color: var(--muted); }}
+  .clinic-name {{ font-size: 15px; font-weight: 700; color: var(--text); flex: 1; }}
   .clinic-arrow {{ font-size: 18px; color: var(--accent); font-weight: 700; }}
   footer {{ margin-top: 32px; padding-top: 22px; border-top: 1px solid var(--line); font-size: 11.5px; color: var(--muted); display: flex; justify-content: space-between; animation: fadeUp 0.5s ease 0.5s both; }}
   footer a {{ color: var(--muted); text-decoration: none; }}
