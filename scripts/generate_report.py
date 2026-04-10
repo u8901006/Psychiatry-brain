@@ -383,10 +383,7 @@ def generate_html(analysis: dict) -> str:
   <div class="clinic-banner">
     <a href="https://www.leepsyclinic.com/" class="clinic-link" target="_blank">
       <span class="clinic-icon">🏥</span>
-      <div class="clinic-info">
-        <span class="clinic-name">Lee Psychiatric Clinic</span>
-        <span class="clinic-url">www.leepsyclinic.com</span>
-      </div>
+      <span class="clinic-name">李政洋身心診所首頁</span>
       <span class="clinic-arrow">→</span>
     </a>
   </div>
