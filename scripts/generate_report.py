@@ -337,7 +337,15 @@ def generate_html(analysis: dict) -> str:
   .topic-bar-bg {{ flex: 1; height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; }}
   .topic-bar {{ height: 100%; background: linear-gradient(90deg, var(--accent), #c47a4a); border-radius: 4px; transition: width 0.6s ease; }}
   .topic-count {{ font-size: 12px; color: var(--accent); width: 24px; }}
-  footer {{ margin-top: 56px; padding-top: 22px; border-top: 1px solid var(--line); font-size: 11.5px; color: var(--muted); display: flex; justify-content: space-between; animation: fadeUp 0.5s ease 0.5s both; }}
+  .clinic-banner {{ margin-top: 48px; animation: fadeUp 0.5s ease 0.4s both; }}
+  .clinic-link {{ display: flex; align-items: center; gap: 14px; padding: 18px 24px; background: var(--card-bg); border: 1px solid var(--line); border-radius: 24px; text-decoration: none; color: var(--text); transition: all 0.2s; box-shadow: 0 8px 30px rgba(61,36,15,0.04); }}
+  .clinic-link:hover {{ border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 12px 40px rgba(61,36,15,0.08); }}
+  .clinic-icon {{ font-size: 28px; flex-shrink: 0; }}
+  .clinic-info {{ flex: 1; display: flex; flex-direction: column; gap: 2px; }}
+  .clinic-name {{ font-size: 15px; font-weight: 700; color: var(--text); }}
+  .clinic-url {{ font-size: 12px; color: var(--muted); }}
+  .clinic-arrow {{ font-size: 18px; color: var(--accent); font-weight: 700; }}
+  footer {{ margin-top: 32px; padding-top: 22px; border-top: 1px solid var(--line); font-size: 11.5px; color: var(--muted); display: flex; justify-content: space-between; animation: fadeUp 0.5s ease 0.5s both; }}
   footer a {{ color: var(--muted); text-decoration: none; }}
   footer a:hover {{ color: var(--accent); }}
   @keyframes fadeDown {{ from {{ opacity: 0; transform: translateY(-16px); }} to {{ opacity: 1; transform: translateY(0); }} }}
@@ -371,6 +379,17 @@ def generate_html(analysis: dict) -> str:
   {"<div class='topic-section section'><div class='section-title'><span class='section-icon'>📊</span>\u4e3b\u984c\u5206\u4f48</div>" + topic_bars_html + "</div>" if topic_bars_html else ""}
 
   {"<div class='keywords-section section'><div class='section-title'><span class='section-icon'>🏷️</span>\u95dc\u9375\u5b57</div><div class='keywords'>" + keywords_html + "</div></div>" if keywords_html else ""}
+
+  <div class="clinic-banner">
+    <a href="https://www.leepsyclinic.com/" class="clinic-link" target="_blank">
+      <span class="clinic-icon">🏥</span>
+      <div class="clinic-info">
+        <span class="clinic-name">Lee Psychiatric Clinic</span>
+        <span class="clinic-url">www.leepsyclinic.com</span>
+      </div>
+      <span class="clinic-arrow">→</span>
+    </a>
+  </div>
 
   <footer>
     <span>\u8cc7\u6599\u4f86\u6e90\uff1aPubMed &middot; \u5206\u6790\u6a21\u578b\uff1a{MODEL_NAME}</span>
