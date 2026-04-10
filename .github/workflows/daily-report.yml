@@ -89,6 +89,7 @@ jobs:
           git add docs/
           git diff --cached --quiet && echo "No changes to commit" && exit 0
           git commit -m "📄 psychiatry daily report: ${{ steps.date.outputs.target }}"
+          git pull --rebase origin main
           git push
 
       - name: Summary
