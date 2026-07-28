@@ -58,7 +58,7 @@ index = f"""<!DOCTYPE html>
   <p class="count">共 {total} 期日報</p>
   <ul>{links}</ul>
   <footer>
-    <p>Powered by PubMed + Zhipu AI · <a href="https://github.com/u8901006/Psychiatry-brain">GitHub</a></p>
+    <p>Powered by PubMed + NVIDIA AI · <a href="https://github.com/u8901006/Psychiatry-brain">GitHub</a></p>
   </footer>
 </div>
 </body>
