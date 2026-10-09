@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Psychiatry Brain &middot; 精神醫學文獻日報 &middot; 2026年10月9日</title>
+<meta name="description" content="2026年10月9日 精神醫學文獻日報，由 AI 自動彙整 PubMed 最新論文"/>
+<style>
+  :root { --bg: #f6f1e8; --surface: #fffaf2; --line: #d8c5ab; --text: #2b2118; --muted: #766453; --accent: #8c4f2b; --accent-soft: #ead2bf; --card-bg: color-mix(in srgb, var(--surface) 92%, white); }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: radial-gradient(circle at top, #fff6ea 0, var(--bg) 55%, #ead8c6 100%); color: var(--text); font-family: "Noto Sans TC", "PingFang TC", "Helvetica Neue", Arial, sans-serif; min-height: 100vh; overflow-x: hidden; }
+  .container { position: relative; z-index: 1; max-width: 880px; margin: 0 auto; padding: 60px 32px 80px; }
+  header { display: flex; align-items: center; gap: 16px; margin-bottom: 52px; animation: fadeDown 0.6s ease both; }
+  .logo { width: 48px; height: 48px; border-radius: 14px; background: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; box-shadow: 0 4px 20px rgba(140,79,43,0.25); }
+  .header-text h1 { font-size: 22px; font-weight: 700; color: var(--text); letter-spacing: -0.3px; }
+  .header-meta { display: flex; gap: 8px; margin-top: 6px; flex-wrap: wrap; align-items: center; }
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; letter-spacing: 0.3px; }
+  .badge-date { background: var(--accent-soft); border: 1px solid var(--line); color: var(--accent); }
+  .badge-count { background: rgba(140,79,43,0.06); border: 1px solid var(--line); color: var(--muted); }
+  .badge-source { background: transparent; color: var(--muted); font-size: 11px; padding: 0 4px; }
+  .summary-card { background: var(--card-bg); border: 1px solid var(--line); border-radius: 24px; padding: 28px 32px; margin-bottom: 32px; box-shadow: 0 20px 60px rgba(61,36,15,0.06); animation: fadeUp 0.5s ease 0.1s both; }
+  .summary-card h2 { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.6px; color: var(--accent); margin-bottom: 16px; }
+  .summary-text { font-size: 15px; line-height: 1.8; color: var(--text); }
+  .section { margin-bottom: 36px; animation: fadeUp 0.5s ease both; }
+  .section-title { display: flex; align-items: center; gap: 10px; font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+  .section-icon { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; background: var(--accent-soft); }
+  .news-card { background: var(--card-bg); border: 1px solid var(--line); border-radius: 24px; padding: 22px 26px; margin-bottom: 12px; box-shadow: 0 8px 30px rgba(61,36,15,0.04); transition: background 0.2s, border-color 0.2s, transform 0.2s; }
+  .news-card:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(61,36,15,0.08); }
+  .news-card.featured { border-left: 3px solid var(--accent); }
+  .news-card.featured:hover { border-color: var(--accent); }
+  .card-header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .rank-badge { background: var(--accent); color: #fff7f0; font-weight: 700; font-size: 12px; padding: 2px 8px; border-radius: 6px; }
+  .emoji-icon { font-size: 18px; }
+  .card-header-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .emoji-sm { font-size: 14px; }
+  .news-card h3 { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 8px; line-height: 1.5; }
+  .journal-source { font-size: 12px; color: var(--accent); margin-bottom: 8px; opacity: 0.8; }
+  .news-card p { font-size: 13.5px; line-height: 1.75; color: var(--muted); }
+  .card-footer { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .tag { padding: 2px 9px; background: var(--accent-soft); border-radius: 999px; font-size: 11px; color: var(--accent); }
+  .news-card a { font-size: 12px; color: var(--accent); text-decoration: none; opacity: 0.7; margin-left: auto; }
+  .news-card a:hover { opacity: 1; }
+  .utility-high { color: #5a7a3a; font-size: 11px; font-weight: 600; padding: 2px 8px; background: rgba(90,122,58,0.1); border-radius: 4px; }
+  .utility-mid { color: #9f7a2e; font-size: 11px; font-weight: 600; padding: 2px 8px; background: rgba(159,122,46,0.1); border-radius: 4px; }
+  .utility-low { color: var(--muted); font-size: 11px; font-weight: 600; padding: 2px 8px; background: rgba(118,100,83,0.08); border-radius: 4px; }
+  .utility-sm { font-size: 10px; }
+  .pico-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; padding: 12px; background: rgba(255,253,249,0.8); border-radius: 14px; border: 1px solid var(--line); }
+  .pico-item { display: flex; gap: 8px; align-items: baseline; }
+  .pico-label { font-size: 10px; font-weight: 700; color: #fff7f0; background: var(--accent); padding: 2px 6px; border-radius: 4px; flex-shrink: 0; }
+  .pico-text { font-size: 12px; color: var(--muted); line-height: 1.4; }
+  .keywords-section { margin-bottom: 36px; }
+  .keywords { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  .keyword { padding: 5px 14px; background: var(--accent-soft); border: 1px solid var(--line); border-radius: 20px; font-size: 12px; color: var(--accent); cursor: default; transition: background 0.2s; }
+  .keyword:hover { background: rgba(140,79,43,0.18); }
+  .topic-section { margin-bottom: 36px; }
+  .topic-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .topic-name { font-size: 13px; color: var(--muted); width: 100px; flex-shrink: 0; text-align: right; }
+  .topic-bar-bg { flex: 1; height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; }
+  .topic-bar { height: 100%; background: linear-gradient(90deg, var(--accent), #c47a4a); border-radius: 4px; transition: width 0.6s ease; }
+  .topic-count { font-size: 12px; color: var(--accent); width: 24px; }
+  .clinic-banner { margin-top: 48px; animation: fadeUp 0.5s ease 0.4s both; }
+  .clinic-link { display: flex; align-items: center; gap: 14px; padding: 18px 24px; background: var(--card-bg); border: 1px solid var(--line); border-radius: 24px; text-decoration: none; color: var(--text); transition: all 0.2s; box-shadow: 0 8px 30px rgba(61,36,15,0.04); }
+  .clinic-link:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 12px 40px rgba(61,36,15,0.08); }
+  .clinic-icon { font-size: 28px; flex-shrink: 0; }
+  .clinic-name { font-size: 15px; font-weight: 700; color: var(--text); flex: 1; }
+  .clinic-arrow { font-size: 18px; color: var(--accent); font-weight: 700; }
+  footer { margin-top: 32px; padding-top: 22px; border-top: 1px solid var(--line); font-size: 11.5px; color: var(--muted); display: flex; justify-content: space-between; animation: fadeUp 0.5s ease 0.5s both; }
+  footer a { color: var(--muted); text-decoration: none; }
+  footer a:hover { color: var(--accent); }
+  @keyframes fadeDown { from { opacity: 0; transform: translateY(-16px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  @media (max-width: 600px) { .container { padding: 36px 18px 60px; } .summary-card, .news-card { padding: 20px 18px; } .pico-grid { grid-template-columns: 1fr; } footer { flex-direction: column; gap: 6px; text-align: center; } .topic-name { width: 70px; font-size: 11px; } }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="logo">🧠</div>
+    <div class="header-text">
+      <h1>Psychiatry Brain &middot; 精神醫學文獻日報</h1>
+      <div class="header-meta">
+        <span class="badge badge-date">📅 2026年10月9日</span>
+        <span class="badge badge-count">📊 25 篇文獻</span>
+        <span class="badge badge-source">Powered by PubMed + NVIDIA AI</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="summary-card">
+    <h2>📋 今日文獻趨勢</h2>
+    <p class="summary-text">今日文獻聚焦於睡眠障礙與嚴重精神疾病的關聯、基因環境相互作用、跨性別者精神健康流行率、以及大腦老化作為跨診斷生物標誌物的研究，顯示出對睡眠醫學、神經科學與社區精神醫學的深度探索趨勢。</p>
+  </div>
+
+  <div class='section'><div class='section-title'><span class='section-icon'>⭐</span>今日精選 TOP Picks</div>
+        <div class="news-card featured">
+          <div class="card-header">
+            <span class="rank-badge">#1</span>
+            <span class="emoji-icon">😴</span>
+            <span class="utility-high">高实用性</span>
+          </div>
+          <h3>睡眠障礙與嚴重精神疾病患者的功能障礙：結構方程模型研究</h3>
+          <p class="journal-source">Psychological medicine &middot; Sleep disturbances and functional impairment in severe mental illness: A structural equation modeling study.</p>
+          <p>在嚴重精神疾病患者中，睡眠障礙（尤其OSA風險與失眠）透過直接及間接路徑顯著預測功能障礙，支持系統篩選睡眠問題以改善臨床預後。</p>
+          
+            <div class="pico-grid">
+              <div class="pico-item"><span class="pico-label">P</span><span class="pico-text">嚴重精神疾病門診患者（N=229）</span></div>
+              <div class="pico-item"><span class="pico-label">I</span><span class="pico-text">無（橫斷面研究，評估睡眠障礙與精神症狀）</span></div>
+              <div class="pico-item"><span class="pico-label">C</span><span class="pico-text">無對照組（內部比較不同睡眠問題與功能障礙的關聯）</span></div>
+              <div class="pico-item"><span class="pico-label">O</span><span class="pico-text">功能障礙（FAST），受失眠（間接效應β=0.22）、憂鬱焦慮症狀（β=0.45）、陰性症狀（β=0.38）、躁狂症狀（β=0.17）及OSA風險（β=0.41）顯著影響</span></div>
+            </div>
+          <div class="card-footer">
+            <span class="tag">睡眠醫學</span><span class="tag">精神分裂症</span><span class="tag">憂鬱症</span><span class="tag">雙相情緒障礙</span>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42847493/" target="_blank">閱讀原文 →</a>
+          </div>
+        </div>
+        <div class="news-card featured">
+          <div class="card-header">
+            <span class="rank-badge">#2</span>
+            <span class="emoji-icon">🌈</span>
+            <span class="utility-high">高实用性</span>
+          </div>
+          <h3>跨性別者全球精神健康流行率：系統性文獻回顧與meta分析</h3>
+          <p class="journal-source">Psychological medicine &middot; Prevalence of mental health outcomes among trans and gender diverse adults: a global systematic review and meta-analysis.</p>
+          <p>跨性別者憂鬱症（40.1%）、焦慮症（29.8%）、PTSD（23.6%）及自殺念頭（43.1%）流行率顯著高於一般人群，凸顯緊迫需肯定性醫療服務。</p>
+          
+            <div class="pico-grid">
+              <div class="pico-item"><span class="pico-label">P</span><span class="pico-text">全球跨性別與性別多樣性成人（N=134,071，來自52國家的207項研究）</span></div>
+              <div class="pico-item"><span class="pico-label">I</span><span class="pico-text">無（流行率觀察研究）</span></div>
+              <div class="pico-item"><span class="pico-label">C</span><span class="pico-text">一般人群基準率</span></div>
+              <div class="pico-item"><span class="pico-label">O</span><span class="pico-text">憂鬱症、焦慮症、PTSD、自殺念頭、自殺未遂、非自殺性自傷的合併流行率</span></div>
+            </div>
+          <div class="card-footer">
+            <span class="tag">憂鬱症</span><span class="tag">焦慮症</span><span class="tag">PTSD</span><span class="tag">自殺防治</span><span class="tag">跨文化精神醫學</span>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42847484/" target="_blank">閱讀原文 →</a>
+          </div>
+        </div>
+        <div class="news-card featured">
+          <div class="card-header">
+            <span class="rank-badge">#3</span>
+            <span class="emoji-icon">🧠</span>
+            <span class="utility-high">高实用性</span>
+          </div>
+          <h3>加速腦老化作為跨診斷生物標誌物：橫跨七種疾病的壽命MRI腦年齡研究</h3>
+          <p class="journal-source">Psychological medicine &middot; Accelerated brain aging as a transdiagnostic biomarker: A lifespan MRI brain age study across seven disorders.</p>
+          <p>使用經年齡偏誤校正的腦-PAD，發現精神分裂症、前顳顰葉痴呆、阿茲海默症等六種疾病顯著老化（+2.08至+7.64歲），但ADHD未見此現象，提供跨診斷神經退化的量化框架。</p>
+          
+            <div class="pico-grid">
+              <div class="pico-item"><span class="pico-label">P</span><span class="pico-text">1,737名患有七種精神/神經退行性疾病患者及1,793名年齡匹配對照組（SZ, MDD, BD, ADHD, CSUD, AD, FTD）</span></div>
+              <div class="pico-item"><span class="pico-label">I</span><span class="pico-text">無（觀察性神經影像研究）</span></div>
+              <div class="pico-item"><span class="pico-label">C</span><span class="pico-text">年齡匹配健康對照組</span></div>
+              <div class="pico-item"><span class="pico-label">O</span><span class="pico-text">腦預測年齡差異（brain-PAD），精神分裂症(+7.64歲)、FTD(+7.61歲)、AD(+3.24歲)、MDD(+2.76歲)、CSUD(+2.91歲)、BD(+2.08歲)顯著升高，ADHD無顯著變化</span></div>
+            </div>
+          <div class="card-footer">
+            <span class="tag">神經科學</span><span class="tag">憂鬱症</span><span class="tag">精神分裂症</span><span class="tag">阿茲海默症</span><span class="tag">雙相情緒障礙</span>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42839301/" target="_blank">閱讀原文 →</a>
+          </div>
+        </div>
+        <div class="news-card featured">
+          <div class="card-header">
+            <span class="rank-badge">#4</span>
+            <span class="emoji-icon">👶🌙</span>
+            <span class="utility-mid">中实用性</span>
+          </div>
+          <h3>不良童年經驗與中國老年人慢性睡眠障礙：基於國家調查的隊列研究</h3>
+          <p class="journal-source">Psychological medicine &middot; Adverse childhood experiences and risk of chronic sleep disturbances: A population-based cohort study from a Chinese national survey.</p>
+          <p>中國老年人中，累積≥3種不良童年經驗（尤其家庭成員精神疾病）使慢性睡眠障礙風險增加2.1倍，提示早期幹預與睡眠篩選的重要性。</p>
+          
+            <div class="pico-grid">
+              <div class="pico-item"><span class="pico-label">P</span><span class="pico-text">中國健康與退休縱貫研究（CHARLS）參與者，經篩選後N=5,533，年齡≥45歲，無精神疾病基礎</span></div>
+              <div class="pico-item"><span class="pico-label">I</span><span class="pico-text">無（觀察性隊列研究）</span></div>
+              <div class="pico-item"><span class="pico-label">C</span><span class="pico-text">0種ACE vs ≥3種ACE</span></div>
+              <div class="pico-item"><span class="pico-label">O</span><span class="pico-text">慢性睡眠障礙（睡眠品質差＋異常睡眠時長），調整後OR=2.10（95%CI: 1.69-2.62）</span></div>
+            </div>
+          <div class="card-footer">
+            <span class="tag">睡眠醫學</span><span class="tag">老年精神醫學</span><span class="tag">兒少精神醫學</span><span class="tag">社區精神醫學</span>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42839298/" target="_blank">閱讀原文 →</a>
+          </div>
+        </div>
+        <div class="news-card featured">
+          <div class="card-header">
+            <span class="rank-badge">#5</span>
+            <span class="emoji-icon">😔</span>
+            <span class="utility-mid">中实用性</span>
+          </div>
+          <h3>孤獨感作為雙相情緒障礙的風險因子及其腦結構改變：英國生物銀行前瞻性隊列研究</h3>
+          <p class="journal-source">Psychological medicine &middot; Loneliness as a risk factor for bipolar disorder and its related brain structure alterations.</p>
+          <p>孤獨感顯著增加患雙相情緒障礙風險（HR=2.83，調整後），並伴隨情緒與社會認知相關腦區灰質體積減少，在高遺傳風險者影響更大。</p>
+          
+            <div class="pico-grid">
+              <div class="pico-item"><span class="pico-label">P</span><span class="pico-text">UK Biobank參與者，無雙相情緒障礙基礎，N=491,472，年齡38-73歲</span></div>
+              <div class="pico-item"><span class="pico-label">I</span><span class="pico-text">無（觀察性前瞻性隊列研究）</span></div>
+              <div class="pico-item"><span class="pico-label">C</span><span class="pico-text">無孤獨感 vs 有孤獨感</span></div>
+              <div class="pico-item"><span class="pico-label">O</span><span class="pico-text"> Incident BD（16年隨訪），HR=2.83（95%CI: 2.47-3.23）；灰質體積減少於前顳葉、顳葉及海馬體等區域</span></div>
+            </div>
+          <div class="card-footer">
+            <span class="tag">雙相情緒障礙</span><span class="tag">神經科學</span><span class="tag">社區精神醫學</span><span class="tag">老年精神醫學</span>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42825385/" target="_blank">閱讀原文 →</a>
+          </div>
+        </div></div>
+
+  <div class='section'><div class='section-title'><span class='section-icon'>📚</span>其他值得關注的文獻</div>
+        <div class="news-card">
+          <div class="card-header-row">
+            <span class="emoji-sm">🧬</span>
+            <span class="utility-mid utility-sm">中</span>
+          </div>
+          <h3>重新審視外化問題的多基因風險與心理社會環境：基因環境相關是否真的如此普遍？</h3>
+          <p class="journal-source">Psychological medicine</p>
+          <p>在控制家庭層級混雜後，外化問題多基因分數與親子關係的基因環境相關持續存在，但與反叛同伴結交及學校連結感的關聯顯著減弱，提醒需謹慎解讀基因環境相關。</p>
+          <div class="card-footer">
+            <span class="tag">兒少精神醫學</span><span class="tag">神經科學</span>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42847489/" target="_blank">PubMed →</a>
+          </div>
+        </div>
+        <div class="news-card">
+          <div class="card-header-row">
+            <span class="emoji-sm">📝</span>
+            <span class="utility-low utility-sm">低</span>
+          </div>
+          <h3>矯正：數位情緒型別預測短期與長期自殺念頭跨越兩年時間尺度</h3>
+          <p class="journal-source">Molecular psychiatry</p>
+          <p>此為更正聲明，無新科學內容。</p>
+          <div class="card-footer">
+            
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42844314/" target="_blank">PubMed →</a>
+          </div>
+        </div>
+        <div class="news-card">
+          <div class="card-header-row">
+            <span class="emoji-sm">🤰</span>
+            <span class="utility-mid utility-sm">中</span>
+          </div>
+          <h3>產前壓力重新編程胎盤信號傳導並抵抗母體免疫激活對胎兒大腦的影響</h3>
+          <p class="journal-source">Molecular psychiatry</p>
+          <p>產前壓力與母體免疫激活透過胎盤對胎兒大腦發育產生相反的分子影響：壓力促進早熟簽名，免疫激活驅動複製應力，揭示胎盤在神經發育中的關鍵調節角色。</p>
+          <div class="card-footer">
+            <span class="tag">神經科學</span><span class="tag">兒少精神醫學</span>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42844313/" target="_blank">PubMed →</a>
+          </div>
+        </div>
+        <div class="news-card">
+          <div class="card-header-row">
+            <span class="emoji-sm">🔬</span>
+            <span class="utility-mid utility-sm">中</span>
+          </div>
+          <h3>強迫症的趨同生物標誌與治療之路</h3>
+          <p class="journal-source">The lancet. Psychiatry</p>
+          <p>此為編輯者觀點文章，未提供摘要，討論強迫症治療與生物標誌之未來方向。</p>
+          <div class="card-footer">
+            <span class="tag">強迫症</span>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42843396/" target="_blank">PubMed →</a>
+          </div>
+        </div>
+        <div class="news-card">
+          <div class="card-header-row">
+            <span class="emoji-sm">🧠</span>
+            <span class="utility-high utility-sm">高</span>
+          </div>
+          <h3>注意力不足/過動症與晚年認知障礙：基於電子健康記錄與遺傳風險的隊列研究</h3>
+          <p class="journal-source">JAMA psychiatry</p>
+          <p>成人ADHD顯著增加晚年輕度認知障礙或癡呆風險（調整後HR=4.60），多基因風險亦具獨立預測力（HR=1.35），提醒長期腦健康監測的重要性。</p>
+          <div class="card-footer">
+            <span class="tag">ADHD</span><span class="tag">老年精神醫學</span><span class="tag">神經科學</span>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42842281/" target="_blank">PubMed →</a>
+          </div>
+        </div>
+        <div class="news-card">
+          <div class="card-header-row">
+            <span class="emoji-sm">💊</span>
+            <span class="utility-low utility-sm">低</span>
+          </div>
+          <h3>鴉片類藥物類似物檢測的時間、地理與多物質使用模式</h3>
+          <p class="journal-source">JAMA psychiatry</p>
+          <p>此為標題僅見條目，無摘要內容。</p>
+          <div class="card-footer">
+            <span class="tag">成癮</span>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42842277/" target="_blank">PubMed →</a>
+          </div>
+        </div>
+        <div class="news-card">
+          <div class="card-header-row">
+            <span class="emoji-sm">🤖</span>
+            <span class="utility-low utility-sm">低</span>
+          </div>
+          <h3>在大型醫療環境中的人工智慧精神病症狀特徵描述</h3>
+          <p class="journal-source">JAMA psychiatry</p>
+          <p>此為標題僅見條目，無摘要內容。</p>
+          <div class="card-footer">
+            <span class="tag">精神藥理學</span>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42842276/" target="_blank">PubMed →</a>
+          </div>
+        </div>
+        <div class="news-card">
+          <div class="card-header-row">
+            <span class="emoji-sm">📣</span>
+            <span class="utility-low utility-sm">低</span>
+          </div>
+          <h3>非洲老年人語音優先心理健康照護模式</h3>
+          <p class="journal-source">JAMA psychiatry</p>
+          <p>此為標題僅見條目，無摘要內容。</p>
+          <div class="card-footer">
+            <span class="tag">老年精神醫學</span><span class="tag">社區精神醫學</span>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42842273/" target="_blank">PubMed →</a>
+          </div>
+        </div>
+        <div class="news-card">
+          <div class="card-header-row">
+            <span class="emoji-sm">📝</span>
+            <span class="utility-low utility-sm">低</span>
+          </div>
+          <h3>討論段落中的錯誤</h3>
+          <p class="journal-source">JAMA psychiatry</p>
+          <p>此為更正聲明，無新科學內容。</p>
+          <div class="card-footer">
+            
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42842272/" target="_blank">PubMed →</a>
+          </div>
+        </div>
+        <div class="news-card">
+          <div class="card-header-row">
+            <span class="emoji-sm">⚡</span>
+            <span class="utility-mid utility-sm">中</span>
+          </div>
+          <h3>電驚療法如何透過調節興奮-抑制平衡來改善重度憂鬱症：分子機制研究</h3>
+          <p class="journal-source">Psychological medicine</p>
+          <p>電驚療法透過降低中回帶皮質Hurst指數（反映興奮-抑制失調），並與皮質髓鞘化、葡萄糖代謝、多巴胺及組胺分布相關，顯示其經由神經膠細胞調節突觸傳遞來改善抑鬱症狀。</p>
+          <div class="card-footer">
+            <span class="tag">憂鬱症</span><span class="tag">神經科學</span><span class="tag">精神藥理學</span>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42839296/" target="_blank">PubMed →</a>
+          </div>
+        </div>
+        <div class="news-card">
+          <div class="card-header-row">
+            <span class="emoji-sm">📝</span>
+            <span class="utility-low utility-sm">low</span>
+          </div>
+          <h3>矯正：第一次發病、未用藥精神疾病患者外周器官系統功能改變：系統性文獻回顧與meta分析</h3>
+          <p class="journal-source">Molecular psychiatry</p>
+          <p>此為更正聲明，無新科學內容。</p>
+          <div class="card-footer">
+            
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42839004/" target="_blank">PubMed →</a>
+          </div>
+        </div>
+        <div class="news-card">
+          <div class="card-header-row">
+            <span class="emoji-sm">🧠</span>
+            <span class="utility-mid utility-sm">中</span>
+          </div>
+          <h3>執行功能作為發育 psychopathology 的跨診斷 endophenotype：理論與證據回顧</h3>
+          <p class="journal-source">Molecular psychiatry</p>
+          <p>提出執行功能（EF）為跨診斷endophenotype，強調其受基因與環境塑造，且其表現不僅取決於認知容量，更受獎勵與努力處理動機脈絡調整，解釋傳統EF訓練效果有限的原因。</p>
+          <div class="card-footer">
+            <span class="tag">兒少精神醫學</span><span class="tag">神經科學</span>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42839003/" target="_blank">PubMed →</a>
+          </div>
+        </div>
+        <div class="news-card">
+          <div class="card-header-row">
+            <span class="emoji-sm">💊</span>
+            <span class="utility-low utility-sm">低</span>
+          </div>
+          <h3>對乙酰氨基酚在人類皮質類器官中的分子與功能影響有限</h3>
+          <p class="journal-source">Molecular psychiatry</p>
+          <p>在體內模擬妊娠早期劑量下，對乙酰氨基酚對皮質類器官之生長、細胞結構、突觸形成及電生理活動無顯著影響，僅見高劑量下極少轉錄變化，提示其胎兒腦發影響可能需透過代謝物或系統機制。</p>
+          <div class="card-footer">
+            <span class="tag">神經科學</span><span class="tag">兒少精神醫學</span>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42839002/" target="_blank">PubMed →</a>
+          </div>
+        </div>
+        <div class="news-card">
+          <div class="card-header-row">
+            <span class="emoji-sm">🧬</span>
+            <span class="utility-high utility-sm">高</span>
+          </div>
+          <h3>憂鬱症多基因 liability 與高風險青少年終生憂鬱症關聯：來自兩個澳洲隊列的mega分析</h3>
+          <p class="journal-source">Molecular psychiatry</p>
+          <p>具有高內化症狀且處於憂鬱症多基因分數最高十分位的青少年，終生患MDD風險增加約8倍（OR=8.58），顯示多基因風險在已有症狀青少年中的分層臨床實用性。</p>
+          <div class="card-footer">
+            <span class="tag">憂鬱症</span><span class="tag">兒少精神醫學</span>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42839001/" target="_blank">PubMed →</a>
+          </div>
+        </div>
+        <div class="news-card">
+          <div class="card-header-row">
+            <span class="emoji-sm">💪</span>
+            <span class="utility-mid utility-sm">中</span>
+          </div>
+          <h3>內在容量如何透過代謝物 signature 調節憂鬱與焦慮風險：英國生物銀行前瞻性隊列研究</h3>
+          <p class="journal-source">Psychological medicine</p>
+          <p>較低內在容量（IC deficit ≥4）顯著增加憂鬱（HR=3.96）與焦慮（HR=3.03）風險，且此效應由59種代謝物signature部分中介，在高多基因風險者影響更大。</p>
+          <div class="card-footer">
+            <span class="tag">憂鬱症</span><span class="tag">焦慮症</span><span class="tag">老年精神醫學</span>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42834851/" target="_blank">PubMed →</a>
+          </div>
+        </div>
+        <div class="news-card">
+          <div class="card-header-row">
+            <span class="emoji-sm">🔍</span>
+            <span class="utility-low utility-sm">低</span>
+          </div>
+          <h3>過濾器不是發現：關於 ascertainment、可證偽性與譜系概念的批判性反思</h3>
+          <p class="journal-source">Psychological medicine</p>
+          <p>此為理論性論文，未提供摘要，診斷光譜概念的哲學與方法論檢視。</p>
+          <div class="card-footer">
+            <span class="tag">精神分裂症</span>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42834846/" target="_blank">PubMed →</a>
+          </div>
+        </div>
+        <div class="news-card">
+          <div class="card-header-row">
+            <span class="emoji-sm">🍄</span>
+            <span class="utility-mid utility-sm">中</span>
+          </div>
+          <h3>美國抑鬱症個體中裸殼菌使用、心理治療利用與未滿足治療需求：國家代表性調查分析</h3>
+          <p class="journal-source">Psychological medicine</p>
+          <p>過去一年使用裸殼菌的抑鬱症個體（7.3%）未減少常規心理治療使用，但顯著增加 perceived unmet treatment need（aPR=1.44），提示其使用可能反映而非取代治療缺口。</p>
+          <div class="card-footer">
+            <span class="tag">憂鬱症</span><span class="tag">心理治療</span><span class="tag">成癮</span>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42834832/" target="_blank">PubMed →</a>
+          </div>
+        </div>
+        <div class="news-card">
+          <div class="card-header-row">
+            <span class="emoji-sm">🧠</span>
+            <span class="utility-mid utility-sm">中</span>
+          </div>
+          <h3>強迫症患者認知與反應抑制的EEG microstate 特徵：可分離的神經生理標誌</h3>
+          <p class="journal-source">Psychological medicine</p>
+          <p>強迫症患者在microstate A停留時間增加、microstate C減少，其中microstate C時長與反應抑制遲滯呈正相關，microstate C/D出現次數與Stroop效應呈負相關，揭示認知與運動抑制的不同神經機制。</p>
+          <div class="card-footer">
+            <span class="tag">強迫症</span><span class="tag">神經科學</span>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42834758/" target="_blank">PubMed →</a>
+          </div>
+        </div>
+        <div class="news-card">
+          <div class="card-header-row">
+            <span class="emoji-sm">🧬</span>
+            <span class="utility-mid utility-sm">中</span>
+          </div>
+          <h3>青少年重度憂鬱症皮質相似網絡變化的轉錄signature：基於MIND網絡模型的研究</h3>
+          <p class="journal-source">Psychological medicine</p>
+          <p>青少年重度憂鬱症患者的皮質MIND網絡異常主要位於眼眶前葉、運動感覺與視覺網絡，其變化與突觸傳遞、神經發育及代謝相關基因表達相關，AUC達0.824，具診斷潛力。</p>
+          <div class="card-footer">
+            <span class="tag">憂鬱症</span><span class="tag">兒少精神醫學</span><span class="tag">神經科學</span>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42834754/" target="_blank">PubMed →</a>
+          </div>
+        </div>
+        <div class="news-card">
+          <div class="card-header-row">
+            <span class="emoji-sm">💊</span>
+            <span class="utility-high utility-sm">高</span>
+          </div>
+          <h3>抗憂鬱藥維持療法 vs 主動監測：結合復發機率與患者偏好的決策分析框架</h3>
+          <p class="journal-source">Psychological medicine</p>
+          <p>決策模型顯示，避免1個月憂鬱所需額外抗憂鬱藥使用年數隨復發史增加而減少（4-5次發作：1.5年；1次輕度發作：11.8年），幫助臨床醫師與患者共同決策維持療法的義務與益處。</p>
+          <div class="card-footer">
+            <span class="tag">憂鬱症</span><span class="tag">心理治療</span>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42834741/" target="_blank">PubMed →</a>
+          </div>
+        </div></div>
+
+  <div class='topic-section section'><div class='section-title'><span class='section-icon'>📊</span>主題分佈</div>
+            <div class="topic-row">
+              <span class="topic-name">憂鬱症</span>
+              <div class="topic-bar-bg"><div class="topic-bar" style="width:88%"></div></div>
+              <span class="topic-count">8</span>
+            </div>
+            <div class="topic-row">
+              <span class="topic-name">精神分裂症</span>
+              <div class="topic-bar-bg"><div class="topic-bar" style="width:33%"></div></div>
+              <span class="topic-count">3</span>
+            </div>
+            <div class="topic-row">
+              <span class="topic-name">雙相情緒障礙</span>
+              <div class="topic-bar-bg"><div class="topic-bar" style="width:22%"></div></div>
+              <span class="topic-count">2</span>
+            </div>
+            <div class="topic-row">
+              <span class="topic-name">焦慮症</span>
+              <div class="topic-bar-bg"><div class="topic-bar" style="width:33%"></div></div>
+              <span class="topic-count">3</span>
+            </div>
+            <div class="topic-row">
+              <span class="topic-name">PTSD</span>
+              <div class="topic-bar-bg"><div class="topic-bar" style="width:11%"></div></div>
+              <span class="topic-count">1</span>
+            </div>
+            <div class="topic-row">
+              <span class="topic-name">強迫症</span>
+              <div class="topic-bar-bg"><div class="topic-bar" style="width:33%"></div></div>
+              <span class="topic-count">3</span>
+            </div>
+            <div class="topic-row">
+              <span class="topic-name">成癮</span>
+              <div class="topic-bar-bg"><div class="topic-bar" style="width:22%"></div></div>
+              <span class="topic-count">2</span>
+            </div>
+            <div class="topic-row">
+              <span class="topic-name">心理治療</span>
+              <div class="topic-bar-bg"><div class="topic-bar" style="width:44%"></div></div>
+              <span class="topic-count">4</span>
+            </div>
+            <div class="topic-row">
+              <span class="topic-name">自殺防治</span>
+              <div class="topic-bar-bg"><div class="topic-bar" style="width:11%"></div></div>
+              <span class="topic-count">1</span>
+            </div>
+            <div class="topic-row">
+              <span class="topic-name">兒少精神醫學</span>
+              <div class="topic-bar-bg"><div class="topic-bar" style="width:77%"></div></div>
+              <span class="topic-count">7</span>
+            </div>
+            <div class="topic-row">
+              <span class="topic-name">自閉症</span>
+              <div class="topic-bar-bg"><div class="topic-bar" style="width:0%"></div></div>
+              <span class="topic-count">0</span>
+            </div>
+            <div class="topic-row">
+              <span class="topic-name">ADHD</span>
+              <div class="topic-bar-bg"><div class="topic-bar" style="width:22%"></div></div>
+              <span class="topic-count">2</span>
+            </div>
+            <div class="topic-row">
+              <span class="topic-name">精神藥理學</span>
+              <div class="topic-bar-bg"><div class="topic-bar" style="width:33%"></div></div>
+              <span class="topic-count">3</span>
+            </div>
+            <div class="topic-row">
+              <span class="topic-name">神經科學</span>
+              <div class="topic-bar-bg"><div class="topic-bar" style="width:100%"></div></div>
+              <span class="topic-count">9</span>
+            </div>
+            <div class="topic-row">
+              <span class="topic-name">疼痛管理</span>
+              <div class="topic-bar-bg"><div class="topic-bar" style="width:0%"></div></div>
+              <span class="topic-count">0</span>
+            </div>
+            <div class="topic-row">
+              <span class="topic-name">解離症</span>
+              <div class="topic-bar-bg"><div class="topic-bar" style="width:0%"></div></div>
+              <span class="topic-count">0</span>
+            </div>
+            <div class="topic-row">
+              <span class="topic-name">睡眠醫學</span>
+              <div class="topic-bar-bg"><div class="topic-bar" style="width:33%"></div></div>
+              <span class="topic-count">3</span>
+            </div>
+            <div class="topic-row">
+              <span class="topic-name">老年精神醫學</span>
+              <div class="topic-bar-bg"><div class="topic-bar" style="width:44%"></div></div>
+              <span class="topic-count">4</span>
+            </div>
+            <div class="topic-row">
+              <span class="topic-name">社區精神醫學</span>
+              <div class="topic-bar-bg"><div class="topic-bar" style="width:44%"></div></div>
+              <span class="topic-count">4</span>
+            </div>
+            <div class="topic-row">
+              <span class="topic-name">跨文化精神醫學</span>
+              <div class="topic-bar-bg"><div class="topic-bar" style="width:22%"></div></div>
+              <span class="topic-count">2</span>
+            </div></div>
+
+  <div class='keywords-section section'><div class='section-title'><span class='section-icon'>🏷️</span>關鍵字</div><div class='keywords'><span class="keyword">睡眠醫學</span><span class="keyword">憂鬱症</span><span class="keyword">跨性別者</span><span class="keyword">腦老化</span><span class="keyword">不良童年經驗</span></div></div>
+
+  <div class="clinic-banner">
+    <a href="https://www.leepsyclinic.com/" class="clinic-link" target="_blank">
+      <span class="clinic-icon">🏥</span>
+      <span class="clinic-name">李政洋身心診所首頁</span>
+      <span class="clinic-arrow">→</span>
+    </a>
+  </div>
+
+  <footer>
+    <span>資料來源：PubMed &middot; 分析模型：nvidia/nemotron-3-super-120b-a12b</span>
+    <span><a href="https://github.com/u8901006/Psychiatry-brain">GitHub</a></span>
+  </footer>
+</div>
+</body>
+</html>
