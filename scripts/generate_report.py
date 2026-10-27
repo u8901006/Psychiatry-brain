@@ -14,7 +14,7 @@ from datetime import datetime, timezone, timedelta
 import httpx
 
 API_BASE = os.environ.get("NVIDIA_API_BASE", "https://integrate.api.nvidia.com/v1")
-MODEL_NAME = os.environ.get("NVIDIA_MODEL", "nvidia/nemotron-3-super-120b-a12b")
+MODEL_NAME = os.environ.get("NVIDIA_MODEL", "nvidia/nemotron-3-ultra-550b-a55b")
 
 SYSTEM_PROMPT = (
     "你是精神醫學領域的資深研究員與科學傳播者。你的任務是：\n"
