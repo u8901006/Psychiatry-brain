@@ -115,7 +115,7 @@ def analyze_papers(api_key: str, papers_data: dict) -> dict:
         "temperature": 1.0,
         "top_p": 0.95,
         "max_tokens": 16384,
-        "reasoning_effort": "none",
+        "chat_template_kwargs": {"enable_thinking": False},
     }
 
     models_to_try = list(dict.fromkeys([MODEL_NAME] + [s.strip() for s in os.environ.get("NVIDIA_MODELS", "deepseek-ai/deepseek-v4.1-flash").split(",") if s.strip()]))
