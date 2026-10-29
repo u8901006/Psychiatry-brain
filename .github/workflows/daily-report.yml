@@ -1,6 +1,11 @@
 name: Psychiatry Daily Report
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/generate_report.py"
+      - ".github/workflows/daily-report.yml"
   schedule:
     - cron: "0 22 * * *" # UTC 22:00 =台北時間 06:00
   workflow_dispatch:
