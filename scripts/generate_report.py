@@ -118,10 +118,16 @@ def analyze_papers(api_key: str, papers_data: dict) -> dict:
         "chat_template_kwargs": {"enable_thinking": False},
     }
 
-    models_to_try = list(dict.fromkeys([MODEL_NAME] + [s.strip() for s in os.environ.get("NVIDIA_MODELS", "deepseek-ai/deepseek-v4.1-flash").split(",") if s.strip()]))
+    models_to_try = list(dict.fromkeys([MODEL_NAME] + [s.strip() for s in os.environ.get("NVIDIA_MODELS", "google/gemma-4-31b-it,deepseek-ai/deepseek-v4.1-flash").split(",") if s.strip()]))
 
     for model in models_to_try:
         payload["model"] = model
+        payload["temperature"] = 0.5 if model.startswith("google/") else 1.0
+        payload["top_p"] = 1.0 if model.startswith("google/") else 0.95
+        if model.startswith("nvidia/"):
+            payload["chat_template_kwargs"] = {"enable_thinking": False}
+        else:
+            payload.pop("chat_template_kwargs", None)
         for attempt in range(3):
             try:
                 print(
@@ -131,7 +137,7 @@ def analyze_papers(api_key: str, papers_data: dict) -> dict:
                     f"{API_BASE}/chat/completions",
                     headers=headers,
                     json=payload,
-                    timeout=480,
+                    timeout=180,
                 )
                 if resp.status_code == 429:
                     wait = 60 * (attempt + 1)
@@ -145,7 +151,15 @@ def analyze_papers(api_key: str, papers_data: dict) -> dict:
                     text = text.split("\n", 1)[1] if "\n" in text else text[3:]
                     text = text.rstrip("`").strip()
 
-                result = json.loads(text)
+                try:
+                    result = json.loads(text)
+                except json.JSONDecodeError:
+                    start, end = text.find("{"), text.rfind("}")
+                    if start < 0 or end <= start:
+                        raise
+                    result = json.loads(text[start:end + 1])
+                if not isinstance(result, dict) or not isinstance(result.get("top_picks"), list):
+                    raise ValueError("Unexpected analysis JSON structure")
                 print(
                     f"[INFO] Analysis complete: {len(result.get('top_picks', []))} top picks, {len(result.get('all_papers', []))} total",
                     file=sys.stderr,
