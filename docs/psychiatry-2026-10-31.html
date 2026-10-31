@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Psychiatry Brain &middot; 精神醫學文獻日報 &middot; 2026年10月31日</title>
+<meta name="description" content="2026年10月31日 精神醫學文獻日報，由 AI 自動彙整 PubMed 最新論文"/>
+<style>
+  :root { --bg: #f6f1e8; --surface: #fffaf2; --line: #d8c5ab; --text: #2b2118; --muted: #766453; --accent: #8c4f2b; --accent-soft: #ead2bf; --card-bg: color-mix(in srgb, var(--surface) 92%, white); }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: radial-gradient(circle at top, #fff6ea 0, var(--bg) 55%, #ead8c6 100%); color: var(--text); font-family: "Noto Sans TC", "PingFang TC", "Helvetica Neue", Arial, sans-serif; min-height: 100vh; overflow-x: hidden; }
+  .container { position: relative; z-index: 1; max-width: 880px; margin: 0 auto; padding: 60px 32px 80px; }
+  header { display: flex; align-items: center; gap: 16px; margin-bottom: 52px; animation: fadeDown 0.6s ease both; }
+  .logo { width: 48px; height: 48px; border-radius: 14px; background: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; box-shadow: 0 4px 20px rgba(140,79,43,0.25); }
+  .header-text h1 { font-size: 22px; font-weight: 700; color: var(--text); letter-spacing: -0.3px; }
+  .header-meta { display: flex; gap: 8px; margin-top: 6px; flex-wrap: wrap; align-items: center; }
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; letter-spacing: 0.3px; }
+  .badge-date { background: var(--accent-soft); border: 1px solid var(--line); color: var(--accent); }
+  .badge-count { background: rgba(140,79,43,0.06); border: 1px solid var(--line); color: var(--muted); }
+  .badge-source { background: transparent; color: var(--muted); font-size: 11px; padding: 0 4px; }
+  .summary-card { background: var(--card-bg); border: 1px solid var(--line); border-radius: 24px; padding: 28px 32px; margin-bottom: 32px; box-shadow: 0 20px 60px rgba(61,36,15,0.06); animation: fadeUp 0.5s ease 0.1s both; }
+  .summary-card h2 { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.6px; color: var(--accent); margin-bottom: 16px; }
+  .summary-text { font-size: 15px; line-height: 1.8; color: var(--text); }
+  .section { margin-bottom: 36px; animation: fadeUp 0.5s ease both; }
+  .section-title { display: flex; align-items: center; gap: 10px; font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+  .section-icon { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; background: var(--accent-soft); }
+  .news-card { background: var(--card-bg); border: 1px solid var(--line); border-radius: 24px; padding: 22px 26px; margin-bottom: 12px; box-shadow: 0 8px 30px rgba(61,36,15,0.04); transition: background 0.2s, border-color 0.2s, transform 0.2s; }
+  .news-card:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(61,36,15,0.08); }
+  .news-card.featured { border-left: 3px solid var(--accent); }
+  .news-card.featured:hover { border-color: var(--accent); }
+  .card-header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .rank-badge { background: var(--accent); color: #fff7f0; font-weight: 700; font-size: 12px; padding: 2px 8px; border-radius: 6px; }
+  .emoji-icon { font-size: 18px; }
+  .card-header-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .emoji-sm { font-size: 14px; }
+  .news-card h3 { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 8px; line-height: 1.5; }
+  .journal-source { font-size: 12px; color: var(--accent); margin-bottom: 8px; opacity: 0.8; }
+  .news-card p { font-size: 13.5px; line-height: 1.75; color: var(--muted); }
+  .card-footer { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .tag { padding: 2px 9px; background: var(--accent-soft); border-radius: 999px; font-size: 11px; color: var(--accent); }
+  .news-card a { font-size: 12px; color: var(--accent); text-decoration: none; opacity: 0.7; margin-left: auto; }
+  .news-card a:hover { opacity: 1; }
+  .utility-high { color: #5a7a3a; font-size: 11px; font-weight: 600; padding: 2px 8px; background: rgba(90,122,58,0.1); border-radius: 4px; }
+  .utility-mid { color: #9f7a2e; font-size: 11px; font-weight: 600; padding: 2px 8px; background: rgba(159,122,46,0.1); border-radius: 4px; }
+  .utility-low { color: var(--muted); font-size: 11px; font-weight: 600; padding: 2px 8px; background: rgba(118,100,83,0.08); border-radius: 4px; }
+  .utility-sm { font-size: 10px; }
+  .pico-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; padding: 12px; background: rgba(255,253,249,0.8); border-radius: 14px; border: 1px solid var(--line); }
+  .pico-item { display: flex; gap: 8px; align-items: baseline; }
+  .pico-label { font-size: 10px; font-weight: 700; color: #fff7f0; background: var(--accent); padding: 2px 6px; border-radius: 4px; flex-shrink: 0; }
+  .pico-text { font-size: 12px; color: var(--muted); line-height: 1.4; }
+  .keywords-section { margin-bottom: 36px; }
+  .keywords { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  .keyword { padding: 5px 14px; background: var(--accent-soft); border: 1px solid var(--line); border-radius: 20px; font-size: 12px; color: var(--accent); cursor: default; transition: background 0.2s; }
+  .keyword:hover { background: rgba(140,79,43,0.18); }
+  .topic-section { margin-bottom: 36px; }
+  .topic-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .topic-name { font-size: 13px; color: var(--muted); width: 100px; flex-shrink: 0; text-align: right; }
+  .topic-bar-bg { flex: 1; height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; }
+  .topic-bar { height: 100%; background: linear-gradient(90deg, var(--accent), #c47a4a); border-radius: 4px; transition: width 0.6s ease; }
+  .topic-count { font-size: 12px; color: var(--accent); width: 24px; }
+  .clinic-banner { margin-top: 48px; animation: fadeUp 0.5s ease 0.4s both; }
+  .clinic-link { display: flex; align-items: center; gap: 14px; padding: 18px 24px; background: var(--card-bg); border: 1px solid var(--line); border-radius: 24px; text-decoration: none; color: var(--text); transition: all 0.2s; box-shadow: 0 8px 30px rgba(61,36,15,0.04); }
+  .clinic-link:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 12px 40px rgba(61,36,15,0.08); }
+  .clinic-icon { font-size: 28px; flex-shrink: 0; }
+  .clinic-name { font-size: 15px; font-weight: 700; color: var(--text); flex: 1; }
+  .clinic-arrow { font-size: 18px; color: var(--accent); font-weight: 700; }
+  footer { margin-top: 32px; padding-top: 22px; border-top: 1px solid var(--line); font-size: 11.5px; color: var(--muted); display: flex; justify-content: space-between; animation: fadeUp 0.5s ease 0.5s both; }
+  footer a { color: var(--muted); text-decoration: none; }
+  footer a:hover { color: var(--accent); }
+  @keyframes fadeDown { from { opacity: 0; transform: translateY(-16px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  @media (max-width: 600px) { .container { padding: 36px 18px 60px; } .summary-card, .news-card { padding: 20px 18px; } .pico-grid { grid-template-columns: 1fr; } footer { flex-direction: column; gap: 6px; text-align: center; } .topic-name { width: 70px; font-size: 11px; } }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="logo">🧠</div>
+    <div class="header-text">
+      <h1>Psychiatry Brain &middot; 精神醫學文獻日報</h1>
+      <div class="header-meta">
+        <span class="badge badge-date">📅 2026年10月31日</span>
+        <span class="badge badge-count">📊 31 篇文獻</span>
+        <span class="badge badge-source">Powered by PubMed + NVIDIA AI</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="summary-card">
+    <h2>📋 今日文獻趨勢</h2>
+    <p class="summary-text">本日文獻以遺傳、神經影像與臨床流行病學為主，重點探討了自閉症、精神分裂症、鬱症的病因、分類與新治療策略，體現了精準精神醫學與跨領域整合的趨勢。</p>
+  </div>
+
+  <div class='section'><div class='section-title'><span class='section-icon'>⭐</span>今日精選 TOP Picks</div>
+        <div class="news-card featured">
+          <div class="card-header">
+            <span class="rank-badge">#1</span>
+            <span class="emoji-icon">📚</span>
+            <span class="utility-high">高实用性</span>
+          </div>
+          <h3>Sex Chromosome Aneuploidies and the Brain: from Neurodevelopmental Risk to Fundamental Biology.</h3>
+          <p class="journal-source">Biological psychiatry &middot; Sex Chromosome Aneuploidies and the Brain: from Neurodevelopmental Risk to Fundamental Biology.</p>
+          <p>Sex chromosome aneuploidies (SCAs) show high penetrance for multiple psychiatric diagnoses, often exceeding recognized genetic risk factors, and involve substantial symptom burden below diagnostic thresholds; SCAs exert large effects on global brain size and reconfigure regional brain anatomy, with X- and Y-chromosome dosage variation reconfiguring cortical anatomy, advancing understanding of SCAs as impactful genetic disorders and genetics-first models for broader psychiatry.</p>
+          
+            <div class="pico-grid">
+              <div class="pico-item"><span class="pico-label">P</span><span class="pico-text">Sex chromosome aneuploidies (SCAs) individuals, approximately 1/400 of the population</span></div>
+              <div class="pico-item"><span class="pico-label">I</span><span class="pico-text">Not applicable (observational/genetic epidemiology study)</span></div>
+              <div class="pico-item"><span class="pico-label">C</span><span class="pico-text">Comparisons across psychiatric diagnoses and with recognized genetic risk factors</span></div>
+              <div class="pico-item"><span class="pico-label">O</span><span class="pico-text">High penetrance for multiple psychiatric diagnoses; effects on global brain size and regional brain anatomy; correlated regional effects of X- and Y-chromosome dosage variation</span></div>
+            </div>
+          <div class="card-footer">
+            <span class="tag">遺傳</span><span class="tag">神經科學</span><span class="tag">精神分裂症</span><span class="tag">憂鬱症</span>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42962961/" target="_blank">閱讀原文 →</a>
+          </div>
+        </div>
+        <div class="news-card featured">
+          <div class="card-header">
+            <span class="rank-badge">#2</span>
+            <span class="emoji-icon">📊</span>
+            <span class="utility-high">高实用性</span>
+          </div>
+          <h3>Trends in Autism Spectrum Disorder Cumulative Incidence and Incidence Density: A Systematic Review.</h3>
+          <p class="journal-source">Biological psychiatry &middot; Trends in Autism Spectrum Disorder Cumulative Incidence and Incidence Density: A Systematic Review.</p>
+          <p>ASD incidence increased in dynamic, administratively defined study populations with moderate or low ascertainment comprehensiveness, but birth-defined cohorts with fixed risk periods and high ascertainment showed inconsistent patterns; overall, available data do not provide compelling evidence of a true increase in ASD occurrence (i.e., an "autism epidemic").</p>
+          
+            <div class="pico-grid">
+              <div class="pico-item"><span class="pico-label">P</span><span class="pico-text">Individuals under 18 years with Autism Spectrum Disorder (ASD)</span></div>
+              <div class="pico-item"><span class="pico-label">I</span><span class="pico-text">Not applicable (systematic review of incidence studies)</span></div>
+              <div class="pico-item"><span class="pico-label">C</span><span class="pico-text">Different incidence frameworks (Category A vs. Category B), diagnostic definitions, and ascertainment comprehensiveness</span></div>
+              <div class="pico-item"><span class="pico-label">O</span><span class="pico-text">Varied ASD incidence patterns by study design; no compelling evidence of a true increase in ASD occurrence</span></div>
+            </div>
+          <div class="card-footer">
+            <span class="tag">自閉症</span><span class="tag">流行病學</span><span class="tag">精神發展</span>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42962960/" target="_blank">閱讀原文 →</a>
+          </div>
+        </div>
+        <div class="news-card featured">
+          <div class="card-header">
+            <span class="rank-badge">#3</span>
+            <span class="emoji-icon">🧠</span>
+            <span class="utility-mid">中实用性</span>
+          </div>
+          <h3>Brain systems supporting the narrative self and psychopathology.</h3>
+          <p class="journal-source">Biological psychiatry &middot; Brain systems supporting the narrative self and psychopathology.</p>
+          <p>The narrative self is supported by distributed brain networks involving subcortical inputs from the basal forebrain, habenula, and mediodorsal thalamus modulating default mode network activity, with salience, frontoparietal, cingulo-opercular, and hippocampal-parahippocampal networks regulating self-belief establishment and update; adolescence is a uniquely vulnerable period for disturbances in narrative self formation, linking neural signatures to momentary variability and psychopathology.</p>
+          
+            <div class="pico-grid">
+              <div class="pico-item"><span class="pico-label">P</span><span class="pico-text">Individuals with psychiatric disorders; adolescents</span></div>
+              <div class="pico-item"><span class="pico-label">I</span><span class="pico-text">Not applicable (review of neurobiological mechanisms)</span></div>
+              <div class="pico-item"><span class="pico-label">C</span><span class="pico-text">Comparison of brain networks between individuals with and without psychopathology</span></div>
+              <div class="pico-item"><span class="pico-label">O</span><span class="pico-text">Alterations in narrative self-supporting brain systems underlie core clinical features across disorders; potential target for future neuroimaging and intervention research</span></div>
+            </div>
+          <div class="card-footer">
+            <span class="tag">神經科學</span><span class="tag">憂鬱症</span><span class="tag">精神分裂症</span><span class="tag">青少年</span>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42962959/" target="_blank">閱讀原文 →</a>
+          </div>
+        </div>
+        <div class="news-card featured">
+          <div class="card-header">
+            <span class="rank-badge">#4</span>
+            <span class="emoji-icon">🎯</span>
+            <span class="utility-high">高实用性</span>
+          </div>
+          <h3>Propensity Score Matching Unmasks Core Predictors of Psychosis Conversion in Clinical High-Risk Individuals.</h3>
+          <p class="journal-source">Schizophrenia bulletin &middot; Propensity Score Matching Unmasks Core Predictors of Psychosis Conversion in Clinical High-Risk Individuals.</p>
+          <p>After propensity score matching balancing demographics and cognition, clinical distinctions (bizarre thinking, unusual thought content, emotional experience disturbances, and Global Assessment of Functioning drop rate) became prominent; the PSM-adjusted model identified these clinical markers as independent predictors with higher discriminative ability (AUC=0.808) than unadjusted model (AUC=0.685), and GAF drop rate alone achieved 73% predictive accuracy post-PSM.</p>
+          
+            <div class="pico-grid">
+              <div class="pico-item"><span class="pico-label">P</span><span class="pico-text">Clinical high-risk (CHR-P) individuals for psychosis</span></div>
+              <div class="pico-item"><span class="pico-label">I</span><span class="pico-text">Not applicable (observational prognostic study)</span></div>
+              <div class="pico-item"><span class="pico-label">C</span><span class="pico-text">CHR converters vs. non-converters after propensity score matching</span></div>
+              <div class="pico-item"><span class="pico-label">O</span><span class="pico-text">Independent predictors of psychosis conversion: bizarre thinking, lower unusual thought content, emotional experience disturbances, and GAF-related indicators; predictive accuracy improved substantially after confounder control</span></div>
+            </div>
+          <div class="card-footer">
+            <span class="tag">精神分裂症</span><span class="tag">臨床預測</span><span class="tag">prodromal psychosis</span>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42960986/" target="_blank">閱讀原文 →</a>
+          </div>
+        </div>
+        <div class="news-card featured">
+          <div class="card-header">
+            <span class="rank-badge">#5</span>
+            <span class="emoji-icon">⚖️</span>
+            <span class="utility-mid">中实用性</span>
+          </div>
+          <h3>C-Reactive Protein Levels and Elevations in Schizophrenia: The Central Role of Body Mass Index.</h3>
+          <p class="journal-source">Schizophrenia bulletin &middot; C-Reactive Protein Levels and Elevations in Schizophrenia: The Central Role of Body Mass Index.</p>
+          <p>While schizophrenia is associated with elevated C-reactive protein (CRP), the addition of BMI substantially attenuates group differences; within schizophrenia, BMI is the dominant predictor of CRP levels (β=+0.031/unit, P<0.001), accounting for substantial variance; BMI and other covariates should be incorporated into schizophrenia studies employing CRP as an inflammatory indicator.</p>
+          
+            <div class="pico-grid">
+              <div class="pico-item"><span class="pico-label">P</span><span class="pico-text">Individuals with schizophrenia and controls</span></div>
+              <div class="pico-item"><span class="pico-label">I</span><span class="pico-text">Not applicable (observational study of inflammatory markers)</span></div>
+              <div class="pico-item"><span class="pico-label">C</span><span class="pico-text">Schizophrenia patients vs. controls with progressive adjustment for covariates</span></div>
+              <div class="pico-item"><span class="pico-label">O</span><span class="pico-text">BMI substantially attenuates CRP elevation in schizophrenia; within schizophrenia, BMI is the dominant predictor of CRP levels</span></div>
+            </div>
+          <div class="card-footer">
+            <span class="tag">精神分裂症</span><span class="tag">炎症</span><span class="tag">BMI</span>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42951686/" target="_blank">閱讀原文 →</a>
+          </div>
+        </div>
+        <div class="news-card featured">
+          <div class="card-header">
+            <span class="rank-badge">#6</span>
+            <span class="emoji-icon">🧬</span>
+            <span class="utility-mid">中实用性</span>
+          </div>
+          <h3>Identifying Neurophysiological Subtypes in Clinical High Risk for Psychosis Using Functional Connectome Profiling.</h3>
+          <p class="journal-source">Schizophrenia bulletin &middot; Identifying Neurophysiological Subtypes in Clinical High Risk for Psychosis Using Functional Connectome Profiling.</p>
+          <p>Two distinct neurophysiological subtypes were identified within the CHR population; Subtype 1 showed widespread reductions in functional connectivity, while Subtype 2 showed widespread increases; Subtype 2 showed poorer performance in sustained attention and verbal learning/memory compared to HC and Subtype 1, suggesting that patterns of aberrant brain network organization have already diverged during the CHR stage with dissociable cognitive profiles.</p>
+          
+            <div class="pico-grid">
+              <div class="pico-item"><span class="pico-label">P</span><span class="pico-text">Clinical high-risk (CHR) individuals for psychosis</span></div>
+              <div class="pico-item"><span class="pico-label">I</span><span class="pico-text">Not applicable (observational neurobiological study)</span></div>
+              <div class="pico-item"><span class="pico-label">C</span><span class="pico-text">CHR subtypes vs. healthy controls and within CHR subtypes</span></div>
+              <div class="pico-item"><span class="pico-label">O</span><span class="pico-text">Two neurophysiological subtypes identified with distinct functional connectivity patterns and cognitive profiles; Subtype 2 associated with poorer sustained attention and verbal memory</span></div>
+            </div>
+          <div class="card-footer">
+            <span class="tag">精神分裂症</span><span class="tag">神經影像</span><span class="tag">亞型分類</span>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42960985/" target="_blank">閱讀原文 →</a>
+          </div>
+        </div>
+        <div class="news-card featured">
+          <div class="card-header">
+            <span class="rank-badge">#7</span>
+            <span class="emoji-icon">🧬</span>
+            <span class="utility-low">低实用性</span>
+          </div>
+          <h3>Multivariate genome-wide association study of post-traumatic stress disorder, alcohol use, and alcohol use disorders.</h3>
+          <p class="journal-source">Molecular psychiatry &middot; Multivariate genome-wide association study of post-traumatic stress disorder, alcohol use, and alcohol use disorders.</p>
+          <p>Partial genetic correlations revealed that problematic alcohol use (ALCP) and PTSD were genetically associated (rG=0.39), while alcohol consumption (ALCC) was only weakly correlated with PTSD; PTSD is more strongly related to alcohol problems, and much of the overlap in PTSD and consumption is accounted for by its overlap with alcohol problems, demonstrating complex partial overlaps among PTSD, AUD, and alcohol consumption.</p>
+          
+            <div class="pico-grid">
+              <div class="pico-item"><span class="pico-label">P</span><span class="pico-text">Individuals with PTSD, alcohol use, and alcohol use disorders</span></div>
+              <div class="pico-item"><span class="pico-label">I</span><span class="pico-text">Not applicable (genetic epidemiological study)</span></div>
+              <div class="pico-item"><span class="pico-label">C</span><span class="pico-text">Genetic correlations between PTSD, alcohol consumption, and problematic alcohol use</span></div>
+              <div class="pico-item"><span class="pico-label">O</span><span class="pico-text">Partial genetic correlation rG=0.39 between ALCP and PTSD; ALCC weakly correlated with PTSD (rG=-0.08); overlap between PTSD and alcohol consumption accounted for by overlap with alcohol problems</span></div>
+            </div>
+          <div class="card-footer">
+            <span class="tag">PTSD</span><span class="tag">成癮</span><span class="tag">遺傳</span>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42957827/" target="_blank">閱讀原文 →</a>
+          </div>
+        </div>
+        <div class="news-card featured">
+          <div class="card-header">
+            <span class="rank-badge">#8</span>
+            <span class="emoji-icon">🛠️</span>
+            <span class="utility-mid">中实用性</span>
+          </div>
+          <h3>Efficacy of Personalizing Cognitive Remediation for Schizophrenia by Targeting Impairments in Early Auditory Processing.</h3>
+          <p class="journal-source">Schizophrenia bulletin &middot; Efficacy of Personalizing Cognitive Remediation for Schizophrenia by Targeting Impairments in Early Auditory Processing.</p>
+          <p>Across cognitive remediation treatment conditions, cognitive gain effect size was moderate; treatment condition did not significantly impact early auditory processing, cognitive, or functional outcomes; early auditory processing deficits are malleable, and cognitive and functional gains can occur for impaired patients regardless of whether early auditory processing training is provided, supporting the value of cognitive remediation for people with schizophrenia.</p>
+          
+            <div class="pico-grid">
+              <div class="pico-item"><span class="pico-label">P</span><span class="pico-text">Outpatient adults diagnosed with schizophrenia</span></div>
+              <div class="pico-item"><span class="pico-label">I</span><span class="pico-text">Cognitive remediation with or without early auditory processing training</span></div>
+              <div class="pico-item"><span class="pico-label">C</span><span class="pico-text">CR with EAP training vs. CR without EAP training</span></div>
+              <div class="pico-item"><span class="pico-label">O</span><span class="pico-text">Moderate cognitive gain effect size; no significant difference in outcomes between treatment conditions; EAP improved modestly across conditions; cognitive gains did not mediate the relationship between EAP gains and functional capacity</span></div>
+            </div>
+          <div class="card-footer">
+            <span class="tag">精神分裂症</span><span class="tag">認知修復</span><span class="tag">治療</span>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42951689/" target="_blank">閱讀原文 →</a>
+          </div>
+        </div></div>
+
+  <div class='section'><div class='section-title'><span class='section-icon'>📚</span>其他值得關注的文獻</div>
+        <div class="news-card">
+          <div class="card-header-row">
+            <span class="emoji-sm">🔬</span>
+            <span class="utility-low utility-sm">低</span>
+          </div>
+          <h3>Clarifying neurobehavioral associations between early-life stress and episodic memory development.</h3>
+          <p class="journal-source">Biological psychiatry</p>
+          <p>Study examined connectome predictive modeling of early-life stress and episodic memory development; keywords include connectome predictive modeling, development, early-life stress, and episodic memory.</p>
+          <div class="card-footer">
+            <span class="tag">神經科學</span><span class="tag">發展</span><span class="tag">創傷</span>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42962957/" target="_blank">PubMed →</a>
+          </div>
+        </div>
+        <div class="news-card">
+          <div class="card-header-row">
+            <span class="emoji-sm">🔊</span>
+            <span class="utility-mid utility-sm">中</span>
+          </div>
+          <h3>Basics of Ultrasound for Transcranial Therapeutics Purposes.</h3>
+          <p class="journal-source">Biological psychiatry</p>
+          <p>Provides practitioners with fundamental background information on transcranial focused ultrasound therapy for neuromodulation; allows critical interpretation of literature and understanding of technical and methodological considerations.</p>
+          <div class="card-footer">
+            <span class="tag">神經科學</span><span class="tag">超音波</span><span class="tag">治療</span>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42962958/" target="_blank">PubMed →</a>
+          </div>
+        </div>
+        <div class="news-card">
+          <div class="card-header-row">
+            <span class="emoji-sm">📈</span>
+            <span class="utility-mid utility-sm">中</span>
+          </div>
+          <h3>Cognitive Trajectories over 13 Years in Schizophrenia Spectrum Disorders: Addressing Selective Dropout Bias.</h3>
+          <p class="journal-source">Schizophrenia bulletin</p>
+          <p>Analyzed cognitive trajectories over 13 years among patients with schizophrenia spectrum disorders versus controls, accounting for dropout bias; patients had lower baseline cognition and higher age predicted worse function; trajectories did not significantly differ from controls despite selective dropout.</p>
+          <div class="card-footer">
+            <span class="tag">精神分裂症</span><span class="tag">認知</span><span class="tag">長itudinal</span>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42960989/" target="_blank">PubMed →</a>
+          </div>
+        </div>
+        <div class="news-card">
+          <div class="card-header-row">
+            <span class="emoji-sm">📊</span>
+            <span class="utility-mid utility-sm">中</span>
+          </div>
+          <h3>Short-Term Cognitive Dynamic Trajectories Comparisons in Early Psychosis.</h3>
+          <p class="journal-source">Schizophrenia bulletin</p>
+          <p>Characterized short-term cognitive changes in healthy controls, clinical high risk, and first-episode schizophrenia; CHR showed broader cognitive improvements, HC improved selectively, FES improved in 3 domains; processing speed and visuospatial memory emerged as phase-specific markers of psychosis conversion in CHR.</p>
+          <div class="card-footer">
+            <span class="tag">精神分裂症</span><span class="tag">認知軌跡</span><span class="tag">early psychosis</span>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42960988/" target="_blank">PubMed →</a>
+          </div>
+        </div>
+        <div class="news-card">
+          <div class="card-header-row">
+            <span class="emoji-sm">🧪</span>
+            <span class="utility-low utility-sm">低</span>
+          </div>
+          <h3>Extra-Synaptic Functions of NRG1 Type I Signaling in Hippocampal γ-Oscillations.</h3>
+          <p class="journal-source">Schizophrenia bulletin</p>
+          <p>Modeled embryonic glutamatergic neuron-specific NRG1 type I overexpression in mice; found abnormal gamma-frequency network oscillations in adolescent hippocampus without neuroinflammation or morphological changes; extra-synaptic NRG1 type I accumulation associated with ErbB4 hyperphosphorylation and altered potassium channel junctions, contributing to network oscillation deficits.</p>
+          <div class="card-footer">
+            <span class="tag">精神分裂症</span><span class="tag">神經機制</span><span class="tag">動物模型</span>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42960987/" target="_blank">PubMed →</a>
+          </div>
+        </div>
+        <div class="news-card">
+          <div class="card-header-row">
+            <span class="emoji-sm">🔄</span>
+            <span class="utility-low utility-sm">低</span>
+          </div>
+          <h3>Multivariate genome-wide association study of post-traumatic stress disorder, alcohol use, and alcohol use disorders.</h3>
+          <p class="journal-source">Molecular psychiatry</p>
+          <p>Leveraged large-scale GWAS data to perform multivariate GWAS of alcohol consumption, problematic alcohol use, and PTSD using GenomicSEM; partial genetic correlations revealed ALCP and PTSD association (rG=0.39), ALCC weakly correlated with PTSD.</p>
+          <div class="card-footer">
+            <span class="tag">PTSD</span><span class="tag">成癮</span><span class="tag">遺傳</span>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42957827/" target="_blank">PubMed →</a>
+          </div>
+        </div>
+        <div class="news-card">
+          <div class="card-header-row">
+            <span class="emoji-sm">🌿</span>
+            <span class="utility-high utility-sm">高</span>
+          </div>
+          <h3>Tryptophan metabolism within the gut-brain axis in depression: mechanisms, association with heterogeneity, and therapeutic opportunities.</h3>
+          <p class="journal-source">Molecular psychiatry</p>
+          <p>Review delineates contributions of kynurenine, serotonin, and microbial indole pathways in modulating neuroimmune signaling, neurotransmitter function, and gut-brain communication; microbiota-dependent tryptophan metabolism exhibits distinct profiles across depressive phenotypes, establishing as a unifying biological framework for depressive heterogeneity; critical appraisal of emerging therapeutic strategies.</p>
+          <div class="card-footer">
+            <span class="tag">憂鬱症</span><span class="tag">腦腸軸</span><span class="tag">代謝</span>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42957828/" target="_blank">PubMed →</a>
+          </div>
+        </div>
+        <div class="news-card">
+          <div class="card-header-row">
+            <span class="emoji-sm">⚠️</span>
+            <span class="utility-mid utility-sm">中</span>
+          </div>
+          <h3>Polygenic dissection of suicidal thoughts and behaviours in high-risk mood-disorder cohorts.</h3>
+          <p class="journal-source">Molecular psychiatry</p>
+          <p>Analysed up to 17,622 participants from Australian genetics of depression and bipolar disorder studies; SI-PGS and SA-PGS showed independent and distinct associations; SA-PGS predicted 23% higher odds of attempt among ideators; findings support ideation-to-action models at the genetic level with partially distinct polygenic liabilities.</p>
+          <div class="card-footer">
+            <span class="tag">自殺防治</span><span class="tag">雙相情緒障礙</span><span class="tag">憂鬱症</span><span class="tag">遺傳</span>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42957829/" target="_blank">PubMed →</a>
+          </div>
+        </div>
+        <div class="news-card">
+          <div class="card-header-row">
+            <span class="emoji-sm">💊</span>
+            <span class="utility-high utility-sm">高</span>
+          </div>
+          <h3>Clozapine Augmentation Strategies and Clinical Predictors of Prolonged Tertiary Hospitalization in Clozapine-Resistant Schizophrenia: a Retrospective Cohort Study.</h3>
+          <p class="journal-source">Schizophrenia bulletin</p>
+          <p>Examined augmentation choice and its association with length of stay and symptomatic outcomes in clozapine-resistant schizophrenia; D2/3R selective antagonism associated with shorter LOS than ECT at index; ECT associated with greater reduction in positive symptoms at discharge; baseline impairment predicted ECT selection.</p>
+          <div class="card-footer">
+            <span class="tag">精神分裂症</span><span class="tag">克唑平</span><span class="tag">輔助治療</span>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42951688/" target="_blank">PubMed →</a>
+          </div>
+        </div>
+        <div class="news-card">
+          <div class="card-header-row">
+            <span class="emoji-sm">📝</span>
+            <span class="utility-mid utility-sm">中</span>
+          </div>
+          <h3>Content Validity and Psychometric Properties Assessment of the Virtual Reality Functional Capacity Assessment Tool and Application in Multiregional Clinical Trials of Cognitive Impairment Associated with Schizophrenia.</h3>
+          <p class="journal-source">Schizophrenia bulletin</p>
+          <p>Synthesized evidence supporting VRFCAT as a valid and reliable performance outcome measure for cognitive impairment associated with schizophrenia; demonstrates alignment with CIAS conceptual model; no practice effects identified in clinical trial data; suitable for assessing functional change in clinical trials.</p>
+          <div class="card-footer">
+            <span class="tag">精神分裂症</span><span class="tag">功能評估</span><span class="tag">虛擬實境</span>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42951687/" target="_blank">PubMed →</a>
+          </div>
+        </div>
+        <div class="news-card">
+          <div class="card-header-row">
+            <span class="emoji-sm">📊</span>
+            <span class="utility-low utility-sm">低</span>
+          </div>
+          <h3>Neurometabolic Differences in Psychosis Observed with 7 Tesla Magnetic Resonance Spectroscopy.</h3>
+          <p class="journal-source">Schizophrenia bulletin</p>
+          <p>Observed lower N-acetyl-aspartate in occipital lobe in psychosis patients and relatives vs controls; higher glucose levels linked to higher psychiatric symptoms, poorer cognition, and impaired visual task performance; alterations in neural metabolism associated with impaired cognitive and perceptual functioning.</p>
+          <div class="card-footer">
+            <span class="tag">精神分裂症</span><span class="tag">磁共振光譜</span><span class="tag">代謝</span>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42951684/" target="_blank">PubMed →</a>
+          </div>
+        </div>
+        <div class="news-card">
+          <div class="card-header-row">
+            <span class="emoji-sm">💞</span>
+            <span class="utility-mid utility-sm">中</span>
+          </div>
+          <h3>Long-Term Course of Loneliness in Psychotic Disorders.</h3>
+          <p class="journal-source">Schizophrenia bulletin</p>
+          <p>Loneliness decreased gradually over 25 years in psychosis cohort, from 62% at 6 months to 51% at 25 years; still exceeded comparison group at 25 years (51% vs 28%); associated with avolition, inexpressivity, and reality distortion symptoms; increasing loneliness did not predict worsening symptoms longitudinally.</p>
+          <div class="card-footer">
+            <span class="tag">精神分裂症</span><span class="tag">孤獨</span><span class="tag">長itudinal</span>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42951683/" target="_blank">PubMed →</a>
+          </div>
+        </div>
+        <div class="news-card">
+          <div class="card-header-row">
+            <span class="emoji-sm">📉</span>
+            <span class="utility-high utility-sm">高</span>
+          </div>
+          <h3>Real-world associations of antipsychotic use with clinical outcomes in schizophrenia: a systematic review and meta-analysis.</h3>
+          <p class="journal-source">Molecular psychiatry</p>
+          <p>Antipsychotic use associated with lower all-cause mortality (pooled estimate 0.64) and lower relapse risk (0.34), but higher risks of cancer (1.41), fractures (1.35), and lung infections (1.25); evidence base limited with several estimates from few studies; subgroup variation by region and design observed.</p>
+          <div class="card-footer">
+            <span class="tag">精神分裂症</span><span class="tag">抗精神病藥物</span><span class="tag">藥物安全性</span>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42934261/" target="_blank">PubMed →</a>
+          </div>
+        </div>
+        <div class="news-card">
+          <div class="card-header-row">
+            <span class="emoji-sm">🌈</span>
+            <span class="utility-mid utility-sm">中</span>
+          </div>
+          <h3>Evolutionary neuropharmacology of serotonergic psychedelics: a cross-species perspective on mechanisms, consciousness, and therapeutic potential.</h3>
+          <p class="journal-source">Molecular psychiatry</p>
+          <p>Integrates evolutionary biology, molecular pharmacology, comparative neuroscience, and computational psychiatry; discusses how psychedelics transiently reshape hierarchical inference; biased receptor signaling and non-hallucinogenic psychoplastogens may dissociate plasticity-related therapeutic effects from hallucinogenic effects.</p>
+          <div class="card-footer">
+            <span class="tag">精神藥理學</span><span class="tag">鬱症</span><span class="tag">創新治療</span>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42957826/" target="_blank">PubMed →</a>
+          </div>
+        </div>
+        <div class="news-card">
+          <div class="card-header-row">
+            <span class="emoji-sm">👶</span>
+            <span class="utility-mid utility-sm">中</span>
+          </div>
+          <h3>Risk Indicator Aggregation and Cluster Stability Across Developmental Domains from Early to Middle Childhood in Children at Familial High-Risk of Schizophrenia or Bipolar Disorder and Population-Based Controls.</h3>
+          <p class="journal-source">Schizophrenia bulletin</p>
+          <p>Identified four risk clusters (Best outcome, Intermediate, Selectively affected, Broadly affected) in children at familial high-risk of schizophrenia or bipolar disorder; clusters showed heterogeneity across domains; 60% stayed in same cluster from age 7 to 11; evidence for need to consider risk heterogeneity in preventive interventions.</p>
+          <div class="card-footer">
+            <span class="tag">兒少精神醫學</span><span class="tag">風險分層</span><span class="tag">預防</span>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42951685/" target="_blank">PubMed →</a>
+          </div>
+        </div>
+        <div class="news-card">
+          <div class="card-header-row">
+            <span class="emoji-sm">📅</span>
+            <span class="utility-high utility-sm">高</span>
+          </div>
+          <h3>Longitudinal Clinical and Functional Outcomes in Adult-Onset Delusional Disorder and Schizophrenia: A 10-Year Prospective Comparison Study.</h3>
+          <p class="journal-source">Schizophrenia bulletin</p>
+          <p>Over 10 years, 41% of DD transitioned to SZ vs 3% of SZ to DD; SZ associated with more relapses, hospitalizations, hallucinations, and perseverative errors; DD showed poorer insight; supports psychosis-spectrum model with longitudinal overlap despite diagnostic differences.</p>
+          <div class="card-footer">
+            <span class="tag">精神分裂症</span><span class="tag">妄想性障礙</span><span class="tag">長期預後</span>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42946535/" target="_blank">PubMed →</a>
+          </div>
+        </div>
+        <div class="news-card">
+          <div class="card-header-row">
+            <span class="emoji-sm">❓</span>
+            <span class="utility-low utility-sm">低</span>
+          </div>
+          <h3>Protocol Deviations in Connectivity-Based Targets for Depression-Reply.</h3>
+          <p class="journal-source">JAMA psychiatry</p>
+          <p>Reply regarding protocol deviations in connectivity-based targets for depression; no abstract provided.</p>
+          <div class="card-footer">
+            <span class="tag">憂鬱症</span><span class="tag">神經調節</span>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42949734/" target="_blank">PubMed →</a>
+          </div>
+        </div>
+        <div class="news-card">
+          <div class="card-header-row">
+            <span class="emoji-sm">❓</span>
+            <span class="utility-low utility-sm">低</span>
+          </div>
+          <h3>Protocol Deviations in Connectivity-Based Targets for Depression.</h3>
+          <p class="journal-source">JAMA psychiatry</p>
+          <p>Study on protocol deviations in connectivity-based targets for depression; no abstract provided.</p>
+          <div class="card-footer">
+            <span class="tag">憂鬱症</span><span class="tag">神經調節</span>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42949728/" target="_blank">PubMed →</a>
+          </div>
+        </div>
+        <div class="news-card">
+          <div class="card-header-row">
+            <span class="emoji-sm">🇺🇦</span>
+            <span class="utility-high utility-sm">高</span>
+          </div>
+          <h3>The Unbroken Integrative Psycho-Trauma Care Model: Health System Implementation in Wartime Ukraine.</h3>
+          <p class="journal-source">JAMA psychiatry</p>
+          <p>Describes implementation of Unbroken Integrative Psycho-Trauma Care Model in Lviv First Medical Union, Ukraine; treated >15,000 individuals for war-related injuries, cared for 400+ former POWs; 7,538 received psychiatric care, 4,165 received trauma-focused psychotherapy; model enabled early identification, continuity between medical and psychiatric treatment, and adaptive delivery of trauma-focused therapies.</p>
+          <div class="card-footer">
+            <span class="tag">創傷後壓力症</span><span class="tag">戰時精神醫學</span><span class="tag">健康系統</span>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42949753/" target="_blank">PubMed →</a>
+          </div>
+        </div>
+        <div class="news-card">
+          <div class="card-header-row">
+            <span class="emoji-sm">📞</span>
+            <span class="utility-mid utility-sm">中</span>
+          </div>
+          <h3>Transforming suicide helpline services into resilient global health infrastructure.</h3>
+          <p class="journal-source">The lancet. Psychiatry</p>
+          <p>No abstract provided; focuses on transforming suicide helpline services into global health infrastructure.</p>
+          <div class="card-footer">
+            <span class="tag">自殺防治</span><span class="tag">衛生系統</span>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42950873/" target="_blank">PubMed →</a>
+          </div>
+        </div>
+        <div class="news-card">
+          <div class="card-header-row">
+            <span class="emoji-sm">⚖️</span>
+            <span class="utility-mid utility-sm">中</span>
+          </div>
+          <h3>In crisis: the mental health system promised me choice, then demanded compliance.</h3>
+          <p class="journal-source">The lancet. Psychiatry</p>
+          <p>No abstract provided; critiques mental health system compliance demands.</p>
+          <div class="card-footer">
+            <span class="tag">心理健康政策</span><span class="tag">患者權益</span>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42950874/" target="_blank">PubMed →</a>
+          </div>
+        </div>
+        <div class="news-card">
+          <div class="card-header-row">
+            <span class="emoji-sm">🌍</span>
+            <span class="utility-high utility-sm">高</span>
+          </div>
+          <h3>Global Burden of Anorexia Nervosa and Bulimia Nervosa, 1990 to 2023, With Forecasts to 2050: A Global Burden of Disease Study 2023 Analysis.</h3>
+          <p class="journal-source">JAMA psychiatry</p>
+          <p>Estimated 18.1 million people globally living with anorexia nervosa or bulimia nervosa in 2023; global prevalent cases increased 71.0% since 1990; age-standardized prevalence and DALY rates rose ~21%; highest rates in high-income regions; forecasts indicate continued increases through 2050.</p>
+          <div class="card-footer">
+            <span class="tag">攝食障礙</span><span class="tag">流行病學</span><span class="tag">預測</span>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42949727/" target="_blank">PubMed →</a>
+          </div>
+        </div>
+        <div class="news-card">
+          <div class="card-header-row">
+            <span class="emoji-sm">🧘</span>
+            <span class="utility-high utility-sm">高</span>
+          </div>
+          <h3>Prefrontal Cortical Changes With Mindfulness-Oriented Recovery Enhancement in Opioid Use Disorder: A Randomized Clinical Trial.</h3>
+          <p class="journal-source">JAMA psychiatry</p>
+          <p>Randomized clinical trial of MORE vs. psychoeducational supportive therapy in OUD; MORE reduced drug-biased activity in middle frontal gyrus and other areas; shift from drug to natural reward responses in PFC associated with lower cue-induced craving and longer abstinence.</p>
+          <div class="card-footer">
+            <span class="tag">成癮</span><span class="tag">正念</span><span class="tag">藥物使用障礙</span>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/42949709/" target="_blank">PubMed →</a>
+          </div>
+        </div></div>
+
+  
+
+  <div class='keywords-section section'><div class='section-title'><span class='section-icon'>🏷️</span>關鍵字</div><div class='keywords'><span class="keyword">精神分裂症</span><span class="keyword">憂鬱症</span><span class="keyword">自閉症</span><span class="keyword">PTSD</span><span class="keyword">成癮</span><span class="keyword">認知</span><span class="keyword">神經科學</span><span class="keyword">遺傳</span><span class="keyword">超音波</span><span class="keyword">輔助治療</span></div></div>
+
+  <div class="clinic-banner">
+    <a href="https://www.leepsyclinic.com/" class="clinic-link" target="_blank">
+      <span class="clinic-icon">🏥</span>
+      <span class="clinic-name">李政洋身心診所首頁</span>
+      <span class="clinic-arrow">→</span>
+    </a>
+  </div>
+
+  <footer>
+    <span>資料來源：PubMed &middot; 分析模型：nvidia/nemotron-3.5-lightning-30b-a3b</span>
+    <span><a href="https://github.com/u8901006/Psychiatry-brain">GitHub</a></span>
+  </footer>
+</div>
+</body>
+</html>
